@@ -10,11 +10,20 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRegistration;
 
 /**
- *
+ *  Main class of Web App.
+ *  Create root application context and child web application context. Initialize them.
+ *  Create and set 'Dispatcher servlet'.
  */
 public class ApplicationStarter implements WebApplicationInitializer {
 
-
+    /**
+     * Configure the given {@link ServletContext} with any servlets, filters, listeners
+     * context-params and attributes necessary for initializing this web application. See
+     * examples {@linkplain WebApplicationInitializer above}.
+     * @param servletContext the {@code ServletContext} to initialize
+     * @throws ServletException if any call against the given {@code ServletContext}
+     * throws a {@code ServletException}
+     */
     @Override
     public void onStartup(ServletContext servletContext) throws ServletException {
 
@@ -26,6 +35,9 @@ public class ApplicationStarter implements WebApplicationInitializer {
 
         //Set active profiles
         // ...
+
+        //Refresh context
+        root_ctx.refresh();
 
         //Create Web Application Context
         AnnotationConfigWebApplicationContext web_ctx = new AnnotationConfigWebApplicationContext();
@@ -52,6 +64,8 @@ public class ApplicationStarter implements WebApplicationInitializer {
                 dispatcher_servlet.addMapping("/");
             }
 
+        //Refresh context
+        web_ctx.refresh();
     }
 
 }
