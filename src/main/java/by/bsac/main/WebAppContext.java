@@ -15,7 +15,10 @@ import org.thymeleaf.spring5.view.ThymeleafViewResolver;
 import org.thymeleaf.templatemode.TemplateMode;
 
 /**
- *
+ * Common Web application context configuration class.
+ * Web ppp context is child of Root app context.
+ * Defines callback methods to customize the Java-based configuration for
+ * Spring MVC enabled via {@code @EnableWebMvc}
  */
 @Configuration
 @EnableWebMvc
