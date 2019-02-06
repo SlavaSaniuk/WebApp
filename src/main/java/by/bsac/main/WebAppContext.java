@@ -74,6 +74,7 @@ public class WebAppContext implements WebMvcConfigurer {
         return view_resolver;
     }
 
+    //Overriding WebMvcConfigurer methods
 
     /**
      * Overriding the Servlet container's default handling of static resources
