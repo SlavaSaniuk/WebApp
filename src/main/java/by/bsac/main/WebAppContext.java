@@ -3,6 +3,7 @@ package by.bsac.main;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Description;
 import org.springframework.web.servlet.config.annotation.DefaultServletHandlerConfigurer;
@@ -22,6 +23,7 @@ import org.thymeleaf.templatemode.TemplateMode;
  */
 @Configuration
 @EnableWebMvc
+@ComponentScan(basePackages = "by.bsac.controllers")
 public class WebAppContext implements WebMvcConfigurer {
 
     //Root application context
