@@ -1,4 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Context path="/">
 
+    <Resource
+            name="jdbc/webapp"
+            auth="container"
+            type="javax.sql.DataSource"
+            username="WebAdmin"
+            password="admin123"
+            driverClassName="com.mysql.cj.jdbc.Driver"
+            url="jdbc:mysql://localhost:36550/webapp"
+            maxTotal="8"
+            maxIdle="4"
+    />
+
 </Context>
