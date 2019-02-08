@@ -1,21 +1,33 @@
 package by.bsac.data;
 
+import org.hibernate.SessionFactory;
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.*;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
+import org.springframework.orm.hibernate5.HibernateTransactionManager;
+import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.annotation.Resource;
 import javax.sql.DataSource;
 
 /**
  * Configuration class for data manipulating.
- * Defines JDBC resources (Data sources).
+ * Define JDBC resources (Data sources), Hibernate local session factory.
  * DAO Beans.
  */
 @Configuration
+@EnableTransactionManagement
 //Import database.properties definition class
 @PropertySource("classpath:configuration/database.properties")
-public class DataConfiguration {
+public class DataConfiguration implements ApplicationContextAware {
+
+    //Application context reference
+    private ApplicationContext application_context;
 
     //Get values from 'database.property' file
     @Value("${db.url}")
@@ -34,6 +46,10 @@ public class DataConfiguration {
     @Resource(mappedName = "jdbc/webapp")
     private DataSource prod_data_source;
 
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        this.application_context = applicationContext;
+    }
 
     /*
      *   Data sources beans definition.
@@ -78,5 +94,56 @@ public class DataConfiguration {
         return this.prod_data_source;
 
     }
+
+    /*
+     * Hibernate beans.
+     */
+
+    /**
+     * Create Session Factory beans witch provides a hibernate sessions.
+     * Main bean in hibernate configuration.
+     * @param ds - Data source (depend on active profile)
+     * @return - session factory bean.
+     */
+    @Bean("hibernateSessionFactory")
+    @Description("Local session factory.")
+    @Resource(name = "data_source")
+    public LocalSessionFactoryBean getSessionFactory(DataSource ds) {
+
+        //Create LocalSessionFactoryBean object:
+        LocalSessionFactoryBean session_factory = new LocalSessionFactoryBean();
+
+        //Set parameters to them:
+        session_factory.setDataSource(ds);
+        session_factory.setPackagesToScan("by.bsac.models");
+        session_factory.setConfigLocation(this.application_context.getResource("classpath:hibernate.cfg.xml"));
+
+        //Return statement:
+        return session_factory;
+    }
+
+    /**
+     * Create transaction dispatcher to allow transaction data access.
+     * @param s - Hibernate session factory.
+     * @return - Transaction dispatcher.
+     */
+    @Bean("transactionManager")
+    @Description("Transaction manager bean")
+    @Autowired
+    public HibernateTransactionManager transactionManager(SessionFactory s) {
+
+        //Create TransactionManager object
+        HibernateTransactionManager transaction_manager = new HibernateTransactionManager();
+
+        //Set parameters to them:
+        transaction_manager.setSessionFactory(s);
+
+        //Return statement:
+        return transaction_manager;
+    }
+
+
+
+
 
 }
