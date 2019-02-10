@@ -12,7 +12,9 @@ import org.springframework.orm.hibernate5.HibernateTransactionManager;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
-import javax.annotation.Resource;
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import javax.sql.DataSource;
 
 /**
@@ -42,10 +44,11 @@ public class DataConfiguration implements ApplicationContextAware {
     @Value("${db.userpass}")
     private String db_userpass;
 
-    //JNDI DataSource
-    @Resource(mappedName = "jdbc/webapp")
-    private DataSource prod_data_source;
-
+    /**
+     * Get reference to root application context:
+     * @param applicationContext - Root application context.
+     * @throws BeansException - unchecked runtime exception.
+     */
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.application_context = applicationContext;
@@ -88,10 +91,16 @@ public class DataConfiguration implements ApplicationContextAware {
     @Bean("data_source")
     @Description("DataSource for production profile.")
     @Profile("production")
-    public DataSource getProdDataSource() {
+    public DataSource getProdDataSource() throws NamingException {
 
-        //Return JNDI DataSource:
-        return this.prod_data_source;
+        //Create JNDI context:
+        Context ctx = new InitialContext();
+
+        //Access to Jva EE environment:
+        Context env_ctx = (Context) ctx.lookup("java:comp/env");
+
+        //Return data source:
+        return (DataSource) env_ctx.lookup("jdbc/webapp");
 
     }
 
@@ -107,7 +116,7 @@ public class DataConfiguration implements ApplicationContextAware {
      */
     @Bean("hibernateSessionFactory")
     @Description("Local session factory.")
-    @Resource(name = "data_source")
+    @Autowired
     public LocalSessionFactoryBean getSessionFactory(DataSource ds) {
 
         //Create LocalSessionFactoryBean object:
@@ -115,7 +124,7 @@ public class DataConfiguration implements ApplicationContextAware {
 
         //Set parameters to them:
         session_factory.setDataSource(ds);
-        session_factory.setPackagesToScan("by.bsac.models");
+        session_factory.setPackagesToScan("by.bsac.models"); //Packages to scan
         session_factory.setConfigLocation(this.application_context.getResource("classpath:hibernate.cfg.xml"));
 
         //Return statement:
