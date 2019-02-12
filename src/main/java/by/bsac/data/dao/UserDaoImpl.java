@@ -6,7 +6,6 @@ import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -19,12 +18,6 @@ public class UserDaoImpl implements UserDao {
 
     private SessionFactory session_factory; //Session factory object
 
-    /**
-     * Autowired method.
-     * Set session factory bean to this component.
-     * @param a_session_factory - Local session factory bean.
-     */
-    @Autowired
     public void setSessionFactory(SessionFactory a_session_factory) {
 
         //Mapping session factories:\
@@ -32,6 +25,10 @@ public class UserDaoImpl implements UserDao {
 
     }
 
+    /**
+     *
+     * @param a_user - user object with specified email and password fields.
+     */
     @Override
     public void create(User a_user) {
 

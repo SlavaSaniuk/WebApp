@@ -2,9 +2,7 @@ package by.bsac.data;
 
 import by.bsac.data.dao.UserDao;
 import by.bsac.data.dao.UserDaoImpl;
-import org.hibernate.SessionFactory;
 import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -33,6 +31,9 @@ public class DataConfiguration implements ApplicationContextAware {
     //Application context reference
     private ApplicationContext application_context;
 
+    //Created data source with active profile:
+    private DataSource active_datasource;
+
     //Get values from 'database.property' file
     @Value("${db.url}")
     private String db_url;
@@ -45,6 +46,9 @@ public class DataConfiguration implements ApplicationContextAware {
 
     @Value("${db.userpass}")
     private String db_userpass;
+
+
+
 
     /**
      * Get reference to root application context:
@@ -80,6 +84,9 @@ public class DataConfiguration implements ApplicationContextAware {
         ds.setUsername(this.db_username);
         ds.setPassword(this.db_userpass);
 
+        //Mapping datasource:
+        this.active_datasource = ds;
+
         //Return configured data source:
         return ds;
 
@@ -101,8 +108,14 @@ public class DataConfiguration implements ApplicationContextAware {
         //Access to Jva EE environment:
         Context env_ctx = (Context) ctx.lookup("java:comp/env");
 
-        //Return data source:
-        return (DataSource) env_ctx.lookup("jdbc/webapp");
+        //Get data source object from JNDI
+        DataSource ds = (DataSource) env_ctx.lookup("jdbc/webapp");
+
+        //Mapping datasource:
+        this.active_datasource = ds;
+
+        //Return statement:
+        return ds;
 
     }
 
@@ -113,20 +126,18 @@ public class DataConfiguration implements ApplicationContextAware {
     /**
      * Create Session Factory beans witch provides a hibernate sessions.
      * Main bean in hibernate configuration.
-     * @param ds - Data source (depend on active profile)
      * @return - session factory bean.
      */
     @Bean("hibernateSessionFactory")
     @Description("Local session factory.")
-    @Autowired
     @Scope("singleton")
-    public LocalSessionFactoryBean getSessionFactory(DataSource ds) {
+    public LocalSessionFactoryBean getSessionFactory() {
 
         //Create LocalSessionFactoryBean object:
         LocalSessionFactoryBean session_factory = new LocalSessionFactoryBean();
 
         //Set parameters to them:
-        session_factory.setDataSource(ds);
+        session_factory.setDataSource(this.active_datasource);
         session_factory.setPackagesToScan("by.bsac.models"); //Packages to scan
         session_factory.setConfigLocation(this.application_context.getResource("classpath:hibernate.cfg.xml"));
 
@@ -136,19 +147,17 @@ public class DataConfiguration implements ApplicationContextAware {
 
     /**
      * Create transaction dispatcher to allow transaction data access.
-     * @param s - Hibernate session factory.
      * @return - Transaction dispatcher.
      */
     @Bean("transactionManager")
     @Description("Transaction manager bean")
-    @Autowired
-    public HibernateTransactionManager transactionManager(SessionFactory s) {
+    public HibernateTransactionManager transactionManager() {
 
         //Create TransactionManager object
         HibernateTransactionManager transaction_manager = new HibernateTransactionManager();
 
         //Set parameters to them:
-        transaction_manager.setSessionFactory(s);
+        transaction_manager.setSessionFactory(getSessionFactory().getObject());
 
         //Return statement:
         return transaction_manager;
@@ -157,12 +166,23 @@ public class DataConfiguration implements ApplicationContextAware {
     /*
      * Data access beans
      */
+
+    /**
+     * Create new User DAO implementation bean.
+     * @return - user DAO implementation bean.
+     */
     @Bean("user_dao")
     @Description("Implementation of UserDao interface.")
     public UserDao getUserDaoImplementation() {
 
+        //Create user DAO implementation object
+        UserDaoImpl user_dao = new UserDaoImpl();
+
+        //Set session factory to them
+        user_dao.setSessionFactory(getSessionFactory().getObject());
+
         //Return statement
-        return new UserDaoImpl();
+        return user_dao;
 
     }
 
