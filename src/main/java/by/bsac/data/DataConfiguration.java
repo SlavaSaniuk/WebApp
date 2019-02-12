@@ -1,5 +1,7 @@
 package by.bsac.data;
 
+import by.bsac.data.dao.UserDao;
+import by.bsac.data.dao.UserDaoImpl;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -117,6 +119,7 @@ public class DataConfiguration implements ApplicationContextAware {
     @Bean("hibernateSessionFactory")
     @Description("Local session factory.")
     @Autowired
+    @Scope("singleton")
     public LocalSessionFactoryBean getSessionFactory(DataSource ds) {
 
         //Create LocalSessionFactoryBean object:
@@ -151,8 +154,17 @@ public class DataConfiguration implements ApplicationContextAware {
         return transaction_manager;
     }
 
+    /*
+     * Data access beans
+     */
+    @Bean("user_dao")
+    @Description("Implementation of UserDao interface.")
+    public UserDao getUserDaoImplementation() {
 
+        //Return statement
+        return new UserDaoImpl();
 
+    }
 
 
 }

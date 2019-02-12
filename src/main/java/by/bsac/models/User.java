@@ -3,7 +3,9 @@ package by.bsac.models;
 import javax.persistence.*;
 
 /**
- *
+ *  Class represent a common user object.
+ *  Annotated with hibernate, JPA annotations to specific table, fields in database table.
+ *  Used for object - relation mapping by hibernate.
  */
 @Entity
 @Table(name = "user")
@@ -15,17 +17,26 @@ public class User {
     private long user_id;
 
     @Column(name = "user_email")
-    private String user_email;
+    private String userEmail;
 
     @Column(name = "user_pass")
-    private String user_pass;
+    private String userPass;
 
     //Constructors
 
+    /**
+     * Default constructor. Used by hibernate to create new Object from relation form.
+     */
     public User() {
 
     }
 
+    /**
+     * Constructor create new user object, with specified email and password.
+     * Used to save information about current user to database.
+     * @param a_email - user email address.
+     * @param a_password - user password.
+     */
     public User(String a_email, String a_password) {
         super();
         this.setUserEmail(a_email);
@@ -45,19 +56,19 @@ public class User {
     }
 
     public String getUserEmail() {
-        return user_email;
+        return userEmail;
     }
 
     public void setUserEmail(String user_email) {
-        this.user_email = user_email;
+        this.userEmail = user_email;
     }
 
     public String getUserPass() {
-        return user_pass;
+        return userPass;
     }
 
     public void setUserPass(String user_pass) {
-        this.user_pass = user_pass;
+        this.userPass = user_pass;
     }
 
     //Override java.lang.Object methods
@@ -103,7 +114,7 @@ public class User {
     @Override
     public String toString() {
 
-        return this.user_id + ": " +this.user_email;
+        return this.getUserId() +": " +this.getUserEmail();
 
     }
 }

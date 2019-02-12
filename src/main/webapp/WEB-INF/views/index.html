@@ -5,6 +5,12 @@
     <title> WebApp </title>
 </head>
 <body>
-    <p> Hello world! </p>
+    <p> login form! </p>
+
+    <form method="post" data-th-object="${user}" >
+        <input type="text" value="user_email" placeholder="Your email" data-th-field="*{userEmail}" />
+        <input type="text" value="user_password" placeholder="Your password" data-th-field="*{userPass}" />
+        <input type="submit" value="Go" />
+    </form>
 </body>
 </html>

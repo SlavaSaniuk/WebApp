@@ -9,8 +9,10 @@ import org.springframework.context.annotation.Import;
  *  Class contains all beans definition.
  */
 @Configuration
-// Import configuration class for data manipulation.
-@Import(by.bsac.data.DataConfiguration.class)
+// Import configuration classes.
+@Import({by.bsac.data.DataConfiguration.class, //Data manipulation class
+            by.bsac.services.ServicesConfiguration.class //Services configuration class
+        })
 public class RootAppContext {
 
 
