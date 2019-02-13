@@ -1,6 +1,7 @@
 package by.bsac.services;
 
 import by.bsac.data.dao.UserDao;
+import by.bsac.exceptions.WebAppException;
 import by.bsac.models.User;
 import org.springframework.stereotype.Service;
 
@@ -30,10 +31,18 @@ public class AuthenticationService {
      * @param a_user - custom user object. Must contain a user email a user password values.
      *                  User email value must be unique.
      */
-    public void registerUser(User a_user) {
+    public User registerUser(User a_user) throws WebAppException{
 
-        //Create user row in database.
-        this.user_dao.create(a_user);
+        //Check for existence user with same email address
+        //If exist - cause new exception.
+        if(this.user_dao.findByEmail(a_user.getUserEmail()) != null)
+                throw new WebAppException("User with email: " +a_user.getUserEmail() +" already exist in database.");
+
+        //Create users row in database and get generated ID:
+        long generated_id  = user_dao.create(a_user);
+
+        //Return created user object:
+        return this.user_dao.findById(generated_id);
 
     }
 

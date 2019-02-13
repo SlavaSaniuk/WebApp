@@ -1,5 +1,7 @@
 package by.bsac.models;
 
+import org.hibernate.annotations.Proxy;
+
 import javax.persistence.*;
 
 /**
@@ -8,6 +10,7 @@ import javax.persistence.*;
  *  Used for object - relation mapping by hibernate.
  */
 @Entity
+@Proxy(lazy = false) //Disable lazy initialization
 @Table(name = "user")
 public class User {
 

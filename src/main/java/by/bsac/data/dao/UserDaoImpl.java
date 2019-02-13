@@ -1,19 +1,18 @@
 package by.bsac.data.dao;
 
 import by.bsac.models.User;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.hibernate.*;
+import org.hibernate.query.Query;
 import org.springframework.stereotype.Repository;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
  *
  */
 @Repository
-public class UserDaoImpl implements UserDao {
+public class UserDaoImpl implements UserDao, Serializable {
 
 
     private SessionFactory session_factory; //Session factory object
@@ -25,20 +24,40 @@ public class UserDaoImpl implements UserDao {
 
     }
 
-    /**
-     *
-     * @param a_user - user object with specified email and password fields.
-     */
+
     @Override
-    public void create(User a_user) {
+    public long create(User a_user) {
 
-        Session session = this.session_factory.openSession();
-        Transaction tr = session.beginTransaction();
+        //Create session and transaction objects
+        Session session = null;
+        Transaction tr = null;
 
-        session.save(a_user);
+        long generated_id = 0;
 
-        tr.commit();
-        session.close();
+        try {
+
+            session = this.session_factory.openSession();
+            tr = session.beginTransaction();
+
+            //Save user object in database
+            //And get generated user ID
+            generated_id = (long) session.save(a_user);
+
+            //Applying transaction
+            tr.commit();
+
+        }catch (HibernateException exc) {
+
+            //Cancel transaction
+            tr.rollback();
+
+        }finally {
+            session.close();
+        }
+
+
+        //Return statement
+        return generated_id;
     }
 
     @Override
@@ -47,13 +66,61 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
-    public List<User> findById(long a_id) {
+    public User findById(long a_id) {
+
+        //Create session and transaction objects
+        Session session;
+        Transaction tr;
+
+        //Create empty user object
+        User founded_user;
+
+        try {
+
+            session = this.session_factory.openSession();
+            tr = session.beginTransaction();
+
+            //Get user object from database
+            founded_user = session.get(User.class, a_id);
+
+        }catch (HibernateException exc) {
+
+        }
+
         return null;
     }
 
     @Override
-    public List<User> findByEmail(String a_email) {
-        return null;
+    public User findByEmail(String a_email) {
+
+        //Create session and transaction objects
+        Session session;
+        Transaction tr;
+
+        // Create empty user object:
+        User founded_user;
+
+        //Open session
+        session = this.session_factory.openSession();
+
+        //Begin transaction
+        tr = session.beginTransaction();
+
+        //Create query object
+        Query hql_query = session.createQuery("FROM User user WHERE user.userEmail = :specified_email");
+
+        //Set parameter to query
+        hql_query.setParameter("specified_email", a_email);
+
+        //Execute query
+        founded_user = (User) hql_query.uniqueResult();
+
+        //Commit transaction, close session
+        tr.commit();
+        session.close();
+
+        //Return statement
+        return founded_user;
     }
 
     @Override

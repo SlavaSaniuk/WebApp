@@ -14,8 +14,9 @@ public interface UserDao {
     /**
      * Method used to save user information in database.
      * @param a_user - user object with specified email and password fields.
+     * @return - generated ID value.
      */
-    void create(User a_user);
+    long create(User a_user);
 
     //Read
 
@@ -30,14 +31,14 @@ public interface UserDao {
      * @param a_id - user identifier.
      * @return - user object with specified identifier.
      */
-    List<User> findById(long a_id);
+    User findById(long a_id);
 
     /**
      * Find user by his email address.
      * @param a_email - user email address.
      * @return - user object with specified email address.
      */
-    List<User> findByEmail(String a_email);
+    User findByEmail(String a_email);
 
     //Update
     /**
