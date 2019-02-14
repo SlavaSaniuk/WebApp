@@ -9,127 +9,217 @@ import java.io.Serializable;
 import java.util.List;
 
 /**
- *
+ *  Implementation of data access to user object ({@link by.bsac.data.dao.UserDao} User DAO).
  */
 @Repository
 public class UserDaoImpl implements UserDao, Serializable {
 
+    //Session factory bean.
+    private SessionFactory session_factory;
 
-    private SessionFactory session_factory; //Session factory object
+    /**
+     * Create new UserDao implementation object.
+     * @param a_session_factory - {@link org.hibernate.SessionFactory>  uses to get sessions to implements DAO methods.
+     */
+    public UserDaoImpl(SessionFactory a_session_factory) {
 
-    public void setSessionFactory(SessionFactory a_session_factory) {
-
-        //Mapping session factories:\
+        //Mapping session factories
         this.session_factory = a_session_factory;
 
     }
 
-
+    /**
+     * Save specifying user object in database. Return generated user ID.
+     * @param a_user - {@link by.bsac.models.User} object with specified email and password fields.
+     * @return - Generated user ID by hibernate generator strategy.
+     * @throws org.hibernate.HibernateException - if session couldn't be opened.
+     */
     @Override
-    public long create(User a_user) {
+    public long create(User a_user) throws HibernateException {
 
         //Create session and transaction objects
-        Session session = null;
+        Session session = session_factory.openSession();
         Transaction tr = null;
+
+        //Check whether the session is opened
+        if (session == null) throw new HibernateException("Session couldn't be opened.");
 
         long generated_id = 0;
 
         try {
 
-            session = this.session_factory.openSession();
             tr = session.beginTransaction();
 
-            //Save user object in database
-            //And get generated user ID
-            generated_id = (long) session.save(a_user);
+            //Persist user object in database.
+            //Get generated user ID.
+             generated_id = (long) session.save(a_user);
 
             //Applying transaction
             tr.commit();
 
         }catch (HibernateException exc) {
-
-            //Cancel transaction
-            tr.rollback();
-
+            if (tr!=null) tr.rollback();
         }finally {
             session.close();
         }
 
+        if (generated_id == 0) throw new HibernateException("User cannot be saved.");
 
         //Return statement
         return generated_id;
+
     }
 
+    /**
+     * Find and return all user rows as User objects.
+     * @return - {@link java.util.List<User>} - all users registered in database.
+     * @throws org.hibernate.HibernateException - if session couldn't be opened.
+     */
     @Override
-    public List<User> findAll() {
-        return null;
-    }
-
-    @Override
-    public User findById(long a_id) {
+    public List<User> findAll() throws HibernateException {
 
         //Create session and transaction objects
-        Session session;
-        Transaction tr;
+        Session session = session_factory.openSession();
+
+        //Check whether the session is opened
+        if (session == null) throw new HibernateException("Session couldn't be opened.");
+
+        Transaction tr = session.beginTransaction();
+
+        //Create hibernate query
+        Query<User> find_all_query = session.createQuery("FROM User user", User.class);
+
+        //Execute query
+        List<User> all_users = find_all_query.list();
+
+        //Applying transaction
+        tr.commit();
+
+        //Close session
+        session.close();
+
+        //Return statement
+        return all_users;
+    }
+
+    /**
+     * Find user row in database by user ID. If user row founded - return appropriate user object,
+     * otherwise return null.
+     * @param a_id - {@link java.lang.Integer} user identifier (user_id).
+     * @return - {@link by.bsac.models.User} object, if user created in database, else return {@code null}.
+     * @throws org.hibernate.HibernateException - if session couldn't be opened.
+     */
+    @Override
+    public User findById(long a_id) throws HibernateException {
+
+        //Create session and transaction objects
+        Session session = session_factory.openSession();
+
+        //Check whether the session is opened
+        if (session == null) throw new HibernateException("Session couldn't be opened.");
+
+        Transaction tr = session.beginTransaction();
 
         //Create empty user object
         User founded_user;
 
-        try {
+        //Get user object from database
+        founded_user = session.get(User.class, a_id);
 
-            session = this.session_factory.openSession();
-            tr = session.beginTransaction();
-
-            //Get user object from database
-            founded_user = session.get(User.class, a_id);
-
-        }catch (HibernateException exc) {
-
-        }
-
-        return null;
-    }
-
-    @Override
-    public User findByEmail(String a_email) {
-
-        //Create session and transaction objects
-        Session session;
-        Transaction tr;
-
-        // Create empty user object:
-        User founded_user;
-
-        //Open session
-        session = this.session_factory.openSession();
-
-        //Begin transaction
-        tr = session.beginTransaction();
-
-        //Create query object
-        Query hql_query = session.createQuery("FROM User user WHERE user.userEmail = :specified_email");
-
-        //Set parameter to query
-        hql_query.setParameter("specified_email", a_email);
-
-        //Execute query
-        founded_user = (User) hql_query.uniqueResult();
-
-        //Commit transaction, close session
+        //Commit transaction
         tr.commit();
+
+        //Close session
         session.close();
 
         //Return statement
         return founded_user;
     }
 
+    /**
+     * Find user row in database by user ID. If user row founded - return appropriate user object,
+     * otherwise return null.
+     * @param a_email - user email address.
+     * @return - {@link by.bsac.models.User} object, if user created in database, else return {@code null}.
+     * @throws org.hibernate.HibernateException - if session couldn't be opened,
+     * or  if there is more than one matching result.
+     */
+    @Override
+    public User findByEmail(String a_email) throws HibernateException {
+
+        //Create session and transaction objects
+        Session session = session_factory.openSession();
+
+        //Check whether the session is opened
+        if (session == null) throw new HibernateException("Session couldn't be opened.");
+
+        Transaction tr = session.beginTransaction();
+
+        //Create hibernate query
+        Query<User> find_by_email = session.createQuery("FROM User user WHERE user.userEmail = :e_mail", User.class);
+
+        User founded_user = find_by_email.uniqueResult();
+
+        //Commit transaction
+        tr.commit();
+
+        //Close session
+        session.close();
+
+        //Return statement
+        return founded_user;
+
+    }
+
     @Override
     public void update(User a_user) {
+
+        Session session = session_factory.openSession();
+        Transaction tr = null;
+
+        //Check whether the session is opened
+        if (session == null) throw new HibernateException("Session couldn't be opened.");
+
+        try {
+
+            tr = session.beginTransaction();
+
+            session.update(a_user);
+
+            tr.commit();
+        }
+        catch (Exception e) {
+            if (tr!=null) tr.rollback();
+        }
+        finally {
+            session.close();
+        }
 
     }
 
     @Override
     public void delete(User a_user) {
+
+        Session session = session_factory.openSession();
+        Transaction tr = null;
+
+        //Check whether the session is opened
+        if (session == null) throw new HibernateException("Session couldn't be opened.");
+
+        try {
+
+            tr = session.beginTransaction();
+
+            session.delete(a_user);
+
+            tr.commit();
+        }
+        catch (Exception e) {
+            if (tr!=null) tr.rollback();
+        }
+        finally {
+            session.close();
+        }
 
     }
 
