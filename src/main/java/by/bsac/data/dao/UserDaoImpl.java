@@ -32,23 +32,15 @@ public class UserDaoImpl implements UserDao, Serializable {
      * Save specifying user object in database. Return generated user ID.
      * @param a_user - {@link by.bsac.models.User} object with specified email and password fields.
      * @return - Generated user ID by hibernate generator strategy.
-     * @throws org.hibernate.HibernateException - if session couldn't be opened.
      */
     @Override
-    public long create(User a_user) throws HibernateException {
-
-        //Create session and transaction objects
-        Session session = session_factory.openSession();
-        Transaction tr = null;
-
-        //Check whether the session is opened
-        if (session == null) throw new HibernateException("Session couldn't be opened.");
-
+    public long create(User a_user) {
+        Session session = null;
         long generated_id = 0;
 
-        try {
+        try( session = session_factory.openSession()) {
 
-            tr = session.beginTransaction();
+            Transaction tr = session.beginTransaction();
 
             //Persist user object in database.
             //Get generated user ID.
@@ -58,12 +50,12 @@ public class UserDaoImpl implements UserDao, Serializable {
             tr.commit();
 
         }catch (HibernateException exc) {
-            if (tr!=null) tr.rollback();
+
+
+
         }finally {
             session.close();
         }
-
-        if (generated_id == 0) throw new HibernateException("User cannot be saved.");
 
         //Return statement
         return generated_id;

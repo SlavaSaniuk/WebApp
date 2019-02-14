@@ -10,6 +10,8 @@ import org.springframework.context.annotation.*;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.orm.hibernate5.HibernateTransactionManager;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
+import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
+import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.naming.Context;
@@ -164,6 +166,25 @@ public class DataConfiguration implements ApplicationContextAware {
     }
 
     /*
+     * Java Persistence API beans
+     */
+
+    @Bean
+    @Description("Factory for entity managers")
+    public LocalContainerEntityManagerFactoryBean getEntityManagerFactory() {
+
+        //Create object
+        LocalContainerEntityManagerFactoryBean emf = new LocalContainerEntityManagerFactoryBean();
+
+        //Set parameters
+        emf.setDataSource(this.active_datasource);
+        emf.setPackagesToScan("by.bsac.models");
+        emf.setJpaVendorAdapter(new HibernateJpaVendorAdapter());
+
+        return null;
+    }
+
+    /*
      * Data access beans
      */
 
@@ -175,14 +196,8 @@ public class DataConfiguration implements ApplicationContextAware {
     @Description("Implementation of UserDao interface.")
     public UserDao getUserDaoImplementation() {
 
-        //Create user DAO implementation object
-        UserDaoImpl user_dao = new UserDaoImpl();
-
-        //Set session factory to them
-        user_dao.setSessionFactory(getSessionFactory().getObject());
-
         //Return statement
-        return user_dao;
+        return new UserDaoImpl(getSessionFactory().getObject());
 
     }
 

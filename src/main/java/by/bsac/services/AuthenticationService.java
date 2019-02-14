@@ -30,16 +30,11 @@ public class AuthenticationService {
 
     public User registerUser(User a_user) throws AuthenticationException {
 
-        //Check for existence user with same email address
-        //If exist - cause new exception.
-        if(this.user_dao.findByEmail(a_user.getUserEmail()) != null)
-                throw new AuthenticationException(AutenticationCodes.LOGIN_ALREADY_REGISTERED);
+        //Check on whether specified email already exist in database.
+        if (user_dao.findByEmail(a_user.getUserEmail()) != null) return null;
 
-        //Create users row in database and get generated ID:
-        long generated_id  = user_dao.create(a_user);
 
-        //Return created user object:
-        return this.user_dao.findById(generated_id);
+            return null;
 
     }
 

@@ -120,4 +120,14 @@ public class User {
         return this.getUserId() +": " +this.getUserEmail();
 
     }
+
+    /**
+     * Check on emptiness user object.
+     * @return - true if user object is not empty, in otherwise return false.
+     */
+    public boolean isEmpty() {
+
+        return this.getUserEmail() != null;
+
+    }
 }
