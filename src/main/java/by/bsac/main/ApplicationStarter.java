@@ -34,7 +34,8 @@ public class ApplicationStarter implements WebApplicationInitializer {
         root_ctx.register(by.bsac.main.RootAppContext.class);
 
         //Set active profiles
-        root_ctx.getEnvironment().setActiveProfiles("production");
+        root_ctx.getEnvironment().setActiveProfiles(SpringProfiles.PRODUCTION.toString());
+        root_ctx.getEnvironment().addActiveProfile(SpringProfiles.JPA.toString());
 
         //Refresh context
         root_ctx.refresh();

@@ -1,19 +1,17 @@
 package by.bsac.data;
 
-import by.bsac.data.dao.UserDao;
-import by.bsac.data.dao.UserDaoImpl;
-import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.*;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.orm.hibernate5.HibernateTransactionManager;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
+import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
+import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
+import javax.annotation.Resource;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
@@ -28,11 +26,9 @@ import javax.sql.DataSource;
 @EnableTransactionManagement
 //Import database.properties definition class
 @PropertySource("classpath:configuration/database.properties")
-public class DataConfiguration implements ApplicationContextAware {
+public class DataConfiguration{
 
-    //Application context reference
-    private ApplicationContext application_context;
-
+    @Resource(name = "data_source")
     //Created data source with active profile:
     private DataSource active_datasource;
 
@@ -49,18 +45,8 @@ public class DataConfiguration implements ApplicationContextAware {
     @Value("${db.userpass}")
     private String db_userpass;
 
-
-
-
-    /**
-     * Get reference to root application context:
-     * @param applicationContext - Root application context.
-     * @throws BeansException - unchecked runtime exception.
-     */
-    @Override
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        this.application_context = applicationContext;
-    }
+    @Value("${hibernate.dialect}")
+    private String hibernate_dialect;
 
     /*
      *   Data sources beans definition.
@@ -74,7 +60,7 @@ public class DataConfiguration implements ApplicationContextAware {
      */
     @Bean("data_source")
     @Description("DataSource for development profile.")
-    @Profile("development")
+    @Profile("DEVELOPMENT")
     public DriverManagerDataSource getDevDataSource() {
 
         //Create DriverManagerDataSource object:
@@ -85,9 +71,6 @@ public class DataConfiguration implements ApplicationContextAware {
         ds.setDriverClassName(this.db_driver_path);
         ds.setUsername(this.db_username);
         ds.setPassword(this.db_userpass);
-
-        //Mapping datasource:
-        this.active_datasource = ds;
 
         //Return configured data source:
         return ds;
@@ -101,7 +84,7 @@ public class DataConfiguration implements ApplicationContextAware {
      */
     @Bean("data_source")
     @Description("DataSource for production profile.")
-    @Profile("production")
+    @Profile("PRODUCTION")
     public DataSource getProdDataSource() throws NamingException {
 
         //Create JNDI context:
@@ -111,13 +94,8 @@ public class DataConfiguration implements ApplicationContextAware {
         Context env_ctx = (Context) ctx.lookup("java:comp/env");
 
         //Get data source object from JNDI
-        DataSource ds = (DataSource) env_ctx.lookup("jdbc/webapp");
-
-        //Mapping datasource:
-        this.active_datasource = ds;
-
         //Return statement:
-        return ds;
+        return (DataSource) env_ctx.lookup("jdbc/webapp");
 
     }
 
@@ -133,6 +111,7 @@ public class DataConfiguration implements ApplicationContextAware {
     @Bean("hibernateSessionFactory")
     @Description("Local session factory.")
     @Scope("singleton")
+    @Profile("HIBERNATE")
     public LocalSessionFactoryBean getSessionFactory() {
 
         //Create LocalSessionFactoryBean object:
@@ -141,7 +120,6 @@ public class DataConfiguration implements ApplicationContextAware {
         //Set parameters to them:
         session_factory.setDataSource(this.active_datasource);
         session_factory.setPackagesToScan("by.bsac.models"); //Packages to scan
-        session_factory.setConfigLocation(this.application_context.getResource("classpath:hibernate.cfg.xml"));
 
         //Return statement:
         return session_factory;
@@ -153,7 +131,8 @@ public class DataConfiguration implements ApplicationContextAware {
      */
     @Bean("transactionManager")
     @Description("Transaction manager bean")
-    public HibernateTransactionManager transactionManager() {
+    @Profile("HIBERNATETransaction")
+    public HibernateTransactionManager getHibernateTransactionManager() {
 
         //Create TransactionManager object
         HibernateTransactionManager transaction_manager = new HibernateTransactionManager();
@@ -165,12 +144,16 @@ public class DataConfiguration implements ApplicationContextAware {
         return transaction_manager;
     }
 
+
+
     /*
      * Java Persistence API beans
      */
 
-    @Bean
+    @Bean("jpa_entity_manager_factory")
     @Description("Factory for entity managers")
+    @Profile("JPA")
+    @Scope("singleton")
     public LocalContainerEntityManagerFactoryBean getEntityManagerFactory() {
 
         //Create object
@@ -184,22 +167,24 @@ public class DataConfiguration implements ApplicationContextAware {
         return null;
     }
 
+    @Bean("transactionManager")
+    @Description("JPA transaction manager")
+    @Profile("JPA")
+    public PlatformTransactionManager getJpaTransactionManager() {
+
+        //Create object:
+        JpaTransactionManager jpa_tr_mng= new JpaTransactionManager();
+
+        //Set parameters to them
+        jpa_tr_mng.setEntityManagerFactory(getEntityManagerFactory().getObject());
+
+        //Return statement
+        return jpa_tr_mng;
+    }
+
     /*
      * Data access beans
      */
-
-    /**
-     * Create new User DAO implementation bean.
-     * @return - user DAO implementation bean.
-     */
-    @Bean("user_dao")
-    @Description("Implementation of UserDao interface.")
-    public UserDao getUserDaoImplementation() {
-
-        //Return statement
-        return new UserDaoImpl(getSessionFactory().getObject());
-
-    }
 
 
 }

@@ -1,9 +1,6 @@
 package by.bsac.controllers;
 
-import by.bsac.exceptions.AuthenticationException;
 import by.bsac.models.User;
-import by.bsac.services.AuthenticationService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,8 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("/")
 public class RootController {
 
-    @Autowired
-    private AuthenticationService authentication_service;
+    //private AuthenticationService authentication_service;
 
     /**
      * Method handing HTTP GET request.
@@ -36,12 +32,6 @@ public class RootController {
 
     @PostMapping
     public String authenticateUser(User a_user) {
-
-        try {
-            this.authentication_service.registerUser(a_user);
-        } catch (AuthenticationException exc) {
-            exc.printStackTrace();
-        }
 
         return "index";
     }
