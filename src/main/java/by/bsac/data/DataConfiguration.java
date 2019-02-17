@@ -1,5 +1,7 @@
 package by.bsac.data;
 
+import by.bsac.data.dao.UserDao;
+import by.bsac.data.dao.UserDaoImpl;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.*;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
@@ -16,6 +18,8 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
+
+import java.util.Properties;
 
 /**
  * Configuration class for data manipulating.
@@ -99,6 +103,18 @@ public class DataConfiguration{
 
     }
 
+    private Properties JpaHibernateProperties() {
+
+        //Create properties:
+        Properties prop = new Properties();
+
+        //Set properties
+        prop.put("hibernate.dialect","org.hibernate.dialect.MySQLDialect");
+
+        //Return stetement:
+        return prop;
+    }
+
     /*
      * Hibernate beans.
      */
@@ -120,6 +136,8 @@ public class DataConfiguration{
         //Set parameters to them:
         session_factory.setDataSource(this.active_datasource);
         session_factory.setPackagesToScan("by.bsac.models"); //Packages to scan
+        session_factory.setHibernateProperties(JpaHibernateProperties());
+
 
         //Return statement:
         return session_factory;
@@ -163,8 +181,9 @@ public class DataConfiguration{
         emf.setDataSource(this.active_datasource);
         emf.setPackagesToScan("by.bsac.models");
         emf.setJpaVendorAdapter(new HibernateJpaVendorAdapter());
+        emf.setJpaProperties(JpaHibernateProperties());
 
-        return null;
+        return emf;
     }
 
     @Bean("transactionManager")
@@ -185,6 +204,13 @@ public class DataConfiguration{
     /*
      * Data access beans
      */
+    @Bean("user_dao")
+    @Description("User DAO implementation")
+    public UserDao getUserDaoImplementation() {
 
+        //Return statement
+        return new UserDaoImpl();
+
+    }
 
 }

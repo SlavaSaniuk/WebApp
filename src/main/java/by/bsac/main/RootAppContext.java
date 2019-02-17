@@ -11,7 +11,7 @@ import org.springframework.context.annotation.Import;
 @Configuration
 // Import configuration classes.
 @Import({by.bsac.data.DataConfiguration.class, //Data manipulation class
-            //by.bsac.services.ServicesConfiguration.class //Services configuration class
+            by.bsac.services.ServicesConfiguration.class //Services configuration class
         })
 public class RootAppContext {
 
