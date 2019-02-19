@@ -1,20 +1,20 @@
 package by.bsac.services;
 
 import by.bsac.data.dao.UserDao;
-import by.bsac.exceptions.AutenticationCodes;
 import by.bsac.exceptions.AuthenticationException;
-import by.bsac.exceptions.WebAppException;
+import by.bsac.exceptions.AuthenticationMessages;
 import by.bsac.models.User;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
- *  Authentication service used for authenticate users in system, or create users rows in database.
+ *  Authentication service used for authenticate users in system, or create users entities in database.
  *  Work with user DAO implementation.
  */
 @Service("authentication_service")
 public class AuthenticationService {
 
-    // user DAO implementation.
+    //User DAO implementation.
     private UserDao user_dao;
 
     /**
@@ -28,14 +28,23 @@ public class AuthenticationService {
 
     }
 
+    @Transactional
     public User registerUser(User a_user) throws AuthenticationException {
 
-        //Check on whether specified email already exist in database.
-        if (user_dao.findByEmail(a_user.getUserEmail()) != null) return null;
+        //Check on user already exist in database:
+        //By email:
+        User checked_user = this.user_dao.findByEmail(a_user.getUserEmail());
 
+        //If exist, throw new exception
+        if(checked_user != null)
+            throw new AuthenticationException(AuthenticationMessages.EMAIL_ALREADY_REGISTERED);
 
-            return null;
+        //Create user in database,
+        //and get generated ID
+        long generated_id = this.user_dao.create(a_user);
 
+        //Return new created user
+        return this.user_dao.findById(generated_id);
     }
 
 }

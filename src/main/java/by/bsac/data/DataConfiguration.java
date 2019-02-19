@@ -24,6 +24,7 @@ import java.util.Properties;
 /**
  * Configuration class for data manipulating.
  * Define JDBC resources (Data sources), Hibernate local session factory.
+ * JPA Entity manager factory. Transaction managers for both JPA and Hibernate orm solutions,
  * DAO Beans.
  */
 @Configuration
@@ -111,7 +112,7 @@ public class DataConfiguration{
         //Set properties
         prop.put("hibernate.dialect","org.hibernate.dialect.MySQLDialect");
 
-        //Return stetement:
+        //Return statement:
         return prop;
     }
 
@@ -204,7 +205,7 @@ public class DataConfiguration{
     /*
      * Data access beans
      */
-    @Bean("user_dao")
+    @Bean(name = "user_dao")
     @Description("User DAO implementation")
     public UserDao getUserDaoImplementation() {
 

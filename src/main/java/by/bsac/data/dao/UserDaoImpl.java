@@ -35,9 +35,6 @@ public class UserDaoImpl implements UserDao {
             this.em.persist(a_user);
         }catch (EntityExistsException exc) {
 
-            //Print exception message
-            exc.printStackTrace();
-
             //Return 0;
             return 0;
 
@@ -109,9 +106,6 @@ public class UserDaoImpl implements UserDao {
             //Get founded user object
             founded_user = (User) find_by_email.getSingleResult();
         }catch (NoResultException exc) {
-
-            //Print exc message
-            exc.printStackTrace();
 
             //Return null
             return null;

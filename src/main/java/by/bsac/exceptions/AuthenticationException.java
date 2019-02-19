@@ -7,7 +7,7 @@ public class AuthenticationException extends WebAppException {
         super(a_message);
     }
 
-    public AuthenticationException(AutenticationCodes code) {
+    public AuthenticationException(AuthenticationMessages code) {
         super(code.toString());
     }
 }

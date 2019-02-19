@@ -3,6 +3,9 @@ package by.bsac.models;
 import org.hibernate.annotations.Proxy;
 
 import javax.persistence.*;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 /**
  *  Class represent a common user object.
@@ -20,9 +23,13 @@ public class User {
     private long user_id;
 
     @Column(name = "user_email")
+    @NotNull(message = "Email address must not be empty")
+    @Min(4)
     private String userEmail;
 
     @Column(name = "user_pass")
+    @NotNull(message = "Password must not be empty")
+    @Size(min = 8, max = 30)
     private String userPass;
 
     //Constructors
@@ -30,32 +37,12 @@ public class User {
     /**
      * Default constructor. Used by hibernate to create new Object from relation form.
      */
-    public User() {
-
-    }
-
-    /**
-     * Constructor create new user object, with specified email and password.
-     * Used to save information about current user to database.
-     * @param a_email - user email address.
-     * @param a_password - user password.
-     */
-    public User(String a_email, String a_password) {
-        super();
-        this.setUserEmail(a_email);
-        this.setUserPass(a_password);
-    }
-
-
+    public User() {}
 
     //Getters and setters
 
     public long getUserId() {
         return user_id;
-    }
-
-    public void setUserId(long user_id) {
-        this.user_id = user_id;
     }
 
     public String getUserEmail() {
@@ -84,7 +71,7 @@ public class User {
         int result = 1;
 
         //ternary operator
-        result = (int) (prime * result + ((Long.valueOf(this.getUserId()) == null) ? 0 : this.getUserId() ));
+        result = (int) (prime * result + (this.getUserId()));
 
         //ternary operator
         result = prime * result + ((this.getUserEmail() == null) ? 0 : this.getUserEmail().hashCode());
@@ -109,8 +96,7 @@ public class User {
         User compared_user = (User) obj;
 
         //Compare ID value
-        if (this.user_id == compared_user.getUserId()) return true;
-        else return false;
+        return this.user_id == compared_user.getUserId();
 
     }
 
@@ -121,13 +107,4 @@ public class User {
 
     }
 
-    /**
-     * Check on emptiness user object.
-     * @return - true if user object is not empty, in otherwise return false.
-     */
-    public boolean isEmpty() {
-
-        return this.getUserEmail() != null;
-
-    }
 }
