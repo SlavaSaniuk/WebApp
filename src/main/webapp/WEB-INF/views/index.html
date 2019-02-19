@@ -7,14 +7,10 @@
 <body>
     <p> login form! </p>
 
-    <form method="post" th:object="${user}">
-        <input type="text" value="user_email" placeholder="Your email" th:field="*{userEmail}" />
-        <input type="text" value="user_password" placeholder="Your password" data-th-field="*{userPass}" />
+    <form method="post" action="/" th:object="${user_form_obj}">
+        <input type="text" value="user_email" placeholder="Your email" th:field="*{userEmail}"  />
+        <input type="text" value="user_password" placeholder="Your password" th:field="*{userPass}"/>
         <input type="submit" value="Go" />
-        <div class="login_error">
-            <p data-th-if="${#fields.hasErrors('userEmail')}" data-th-error="*{userEmail}"> Incorrect email </p>
-            <p data-th-if="${#fields.hasErrors('userPass')}" data-th-error="*{userPass}"> Incorrect password </p>
-        </div>
     </form>
 
 </body>

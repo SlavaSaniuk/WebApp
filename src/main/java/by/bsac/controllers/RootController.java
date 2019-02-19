@@ -7,12 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.ui.ModelMap;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-
-import javax.validation.Valid;
-
 
 /**
  * Controller uses for handing request on '/' path.
@@ -25,33 +20,30 @@ public class RootController {
 
     private AuthenticationService authentication_service;
 
+    @ModelAttribute("user_form_obj")
+    public User getUserFormObj() {
+        return new User();
+    }
+
     /**
      * Method handing HTTP GET request.
      * @return - logical view name.
      */
     @GetMapping
-    public String getRootView(ModelMap model) {
-        User usr = new User();
-        model.put("usr", usr);
+    public String getRootView() {
         return "index";
     }
 
 
     @PostMapping
-    public String authenticateUser(@Valid User user, BindingResult result) {
+    public String authenticateUser(@ModelAttribute("user_form_obj") User user_obj) {
 
-        //Validate user input
-        if (result.hasErrors()) {
-            System.out.println("ReSult has error");
-            return "index";
-        }else System.out.println("RESULT HAS NOT ERRORS");
-
-        System.out.println(user.getUserEmail());
-        System.out.println(user.getUserPass());
+        System.out.println(user_obj.getUserEmail());
+        System.out.println(user_obj.getUserPass());
 
         //Try to register user in system
         try {
-            User registered_user = authentication_service.registerUser(user);
+            User registered_user = authentication_service.registerUser(user_obj);
 
         }catch (AuthenticationException exc) {
             System.out.println(exc.getMessage());
