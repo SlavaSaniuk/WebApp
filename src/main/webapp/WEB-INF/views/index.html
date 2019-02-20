@@ -7,9 +7,11 @@
 <body>
     <p> login form! </p>
 
-    <form method="post" action="/" th:object="${user_form_obj}">
+    <form method="post" th:action="@{/}" th:object="${user_form_obj}">
         <input type="text" value="user_email" placeholder="Your email" th:field="*{userEmail}"  />
+        <p th:if="${#fields.hasErrors('userEmail')}" th:errors="*{userEmail}"> Email is incorrect. </p>
         <input type="text" value="user_password" placeholder="Your password" th:field="*{userPass}"/>
+        <p th:if="${#fields.hasErrors('userPass')}" th:errors="*{userPass}"> Password is incorrect. </p>
         <input type="submit" value="Go" />
     </form>
 

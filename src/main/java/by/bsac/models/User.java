@@ -3,7 +3,6 @@ package by.bsac.models;
 import org.hibernate.annotations.Proxy;
 
 import javax.persistence.*;
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -24,12 +23,12 @@ public class User {
 
     @Column(name = "user_email")
     @NotNull(message = "Email address must not be empty")
-    @Min(4)
+    @Size(min = 4, message = "Entered email is short")
     private String userEmail;
 
     @Column(name = "user_pass")
+    @Size(min = 8, message = "Password length must contain a minimum 8 character.")
     @NotNull(message = "Password must not be empty")
-    @Size(min = 8, max = 30)
     private String userPass;
 
     //Constructors
