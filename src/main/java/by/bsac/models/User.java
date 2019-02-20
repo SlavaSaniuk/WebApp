@@ -1,5 +1,6 @@
 package by.bsac.models;
 
+import by.bsac.data.validation.Email;
 import org.hibernate.annotations.Proxy;
 
 import javax.persistence.*;
@@ -23,7 +24,7 @@ public class User {
 
     @Column(name = "user_email")
     @NotNull(message = "Email address must not be empty")
-    @Size(min = 4, message = "Entered email is short")
+    @Email(message = "Entered email is invalid")
     private String userEmail;
 
     @Column(name = "user_pass")
