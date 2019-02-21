@@ -1,21 +1,24 @@
 package by.bsac.models;
 
 import by.bsac.data.validation.Email;
+import by.bsac.services.Sha512Encryptor;
+import by.bsac.util.Convertor;
 import org.hibernate.annotations.Proxy;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.io.Serializable;
 
 /**
  *  Class represent a common user object.
  *  Annotated with hibernate, JPA annotations to specific table, fields in database table.
  *  Used for object - relation mapping by hibernate.
  */
-@Entity
+@Entity()
 @Proxy(lazy = false) //Disable lazy initialization
 @Table(name = "user")
-public class User {
+public class User implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,12 +35,21 @@ public class User {
     @NotNull(message = "Password must not be empty")
     private String userPass;
 
+    @Column(name = "pass_salt")
+    private String passSalt;
+
+    //Password encryption object:
+    //'transient' - don't serializable
+    private transient Sha512Encryptor password_encryptor = new Sha512Encryptor();
+
     //Constructors
 
     /**
      * Default constructor. Used by hibernate to create new Object from relation form.
      */
-    public User() {}
+    public User() {
+
+    }
 
     //Getters and setters
 
@@ -59,6 +71,26 @@ public class User {
 
     public void setUserPass(String user_pass) {
         this.userPass = user_pass;
+    }
+
+    public String getPassSalt() {
+        return passSalt;
+    }
+
+    /**
+     * Method generating random 128 byte string for column password salt 'pass_salt';
+     * Uses for register user in database.
+     * By this column definition (On class FIELD) JPA provider direct get/set values to object fields.
+     */
+    public void setPassSalt() {
+
+        //Generate password salt
+        byte[] generated_salt = this.password_encryptor.getSalt(64);
+
+        //Convert to HEX string
+        String hex_salt = Convertor.byteToHexForm(generated_salt);
+        System.out.println(hex_salt +" length: - " +hex_salt.length());
+        this.passSalt = hex_salt;
     }
 
     //Override java.lang.Object methods
@@ -106,5 +138,7 @@ public class User {
         return this.getUserId() +": " +this.getUserEmail();
 
     }
+
+
 
 }

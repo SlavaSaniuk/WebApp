@@ -10,3 +10,9 @@ CREATE TABLE user (
   user_pass VARCHAR(30) NOT NULL,
   PRIMARY KEY (user_id)
 );
+
+/*
+  Add column 'pass_salt' - NOT NULL.
+ */
+ALTER TABLE user
+  ADD COLUMN pass_salt VARCHAR(128) NOT NULL AFTER user_pass;

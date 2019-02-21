@@ -48,6 +48,7 @@ public class RootController {
             return "index";
         }
 
+
         //Try to register user in system
         try {
             User registered_user = authentication_service.registerUser(user_obj);

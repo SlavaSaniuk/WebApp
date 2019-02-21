@@ -39,6 +39,9 @@ public class AuthenticationService {
         if(checked_user != null)
             throw new AuthenticationException(AuthenticationMessages.EMAIL_ALREADY_REGISTERED);
 
+        //Generate password salt to given user
+        a_user.setPassSalt();
+
         //Create user in database,
         //and get generated ID
         long generated_id = this.user_dao.create(a_user);
