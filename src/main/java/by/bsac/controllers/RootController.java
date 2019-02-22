@@ -1,8 +1,7 @@
 package by.bsac.controllers;
 
 import by.bsac.exceptions.AuthenticationException;
-import by.bsac.exceptions.AuthenticationMessages;
-import by.bsac.models.User;
+ import by.bsac.models.User;
 import by.bsac.services.AuthenticationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
@@ -44,7 +43,7 @@ public class RootController {
 
         //Check on validity users input
         if(errors.hasFieldErrors()) {
-            //if user
+            user_obj.setUserPass("");
             return "index";
         }
 
@@ -64,6 +63,8 @@ public class RootController {
             return "index";
 
         }
+
+        user_obj.setUserPass("");
 
         return "index";
     }

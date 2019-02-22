@@ -47,9 +47,7 @@ public class User implements Serializable {
     /**
      * Default constructor. Used by hibernate to create new Object from relation form.
      */
-    public User() {
-
-    }
+    public User() {}
 
     //Getters and setters
 
@@ -82,15 +80,36 @@ public class User implements Serializable {
      * Uses for register user in database.
      * By this column definition (On class FIELD) JPA provider direct get/set values to object fields.
      */
-    public void setPassSalt() {
+    private void setPassSalt() {
 
         //Generate password salt
         byte[] generated_salt = this.password_encryptor.getSalt(64);
 
         //Convert to HEX string
-        String hex_salt = Convertor.byteToHexForm(generated_salt);
-        System.out.println(hex_salt +" length: - " +hex_salt.length());
-        this.passSalt = hex_salt;
+        this.passSalt = Convertor.byteToHexForm(generated_salt);
+    }
+
+    /**
+     * Hashing user password with selected hash function.
+     * Method should be used after the user entered his password in clear form.
+     */
+    public void encryptUserPassword() {
+
+        //Get generated pass salt:
+        String pass_salt = getPassSalt();
+
+        //If pass salt is not generated, then generate pass salt
+        if (pass_salt == null) {
+            setPassSalt();
+            pass_salt = getPassSalt();
+        }
+
+        //Encrypt user password
+        byte[] hash_bytes = this.password_encryptor.encrypt(this.getUserPass(), pass_salt.getBytes());
+
+        //Set user password to field
+        this.userPass = Convertor.byteToHexForm(hash_bytes);
+
     }
 
     //Override java.lang.Object methods

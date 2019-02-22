@@ -16,3 +16,10 @@ CREATE TABLE user (
  */
 ALTER TABLE user
   ADD COLUMN pass_salt VARCHAR(128) NOT NULL AFTER user_pass;
+
+/*
+  Modify type of column 'user_pass'.
+  Set it to VARCHAR(128);
+ */
+ALTER TABLE user
+  MODIFY user_pass varchar(128) NOT NULL;
