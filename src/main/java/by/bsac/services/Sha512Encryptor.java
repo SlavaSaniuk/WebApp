@@ -1,6 +1,8 @@
 package by.bsac.services;
 
 
+import by.bsac.exceptions.NotSameTypesException;
+import by.bsac.util.CommonUtils;
 import org.springframework.stereotype.Component;
 
 import java.security.MessageDigest;
@@ -25,10 +27,18 @@ public class Sha512Encryptor extends AbstractEncryptionService {
 
         //Concatenate two byte arrays
         //salt + password
-        byte[] password_with_salt = new byte[password_bytes.length + a_salt.length];
+        byte[] password_with_salt;
 
-        System.arraycopy(a_salt, 0, password_with_salt, 0, a_salt.length);
-        System.arraycopy(password_bytes, 0, password_with_salt, a_salt.length, password_bytes.length);
+        try {
+            password_with_salt = CommonUtils.concatenateTwoArrays(password_bytes, a_salt);
+        } catch (NotSameTypesException exc) {
+            exc.printStackTrace();
+            return new byte[64];
+        }
+        //new byte[password_bytes.length + a_salt.length];
+
+        //System.arraycopy(a_salt, 0, password_with_salt, 0, a_salt.length);
+        //System.arraycopy(password_bytes, 0, password_with_salt, a_salt.length, password_bytes.length);
 
         byte[] resulting_hash;
 
