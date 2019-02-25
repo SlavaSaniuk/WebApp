@@ -1,4 +1,4 @@
-package by.bsac.services;
+package by.bsac.services.hashing;
 
 /**
  *  This interface is contract between different encryption algorithm.

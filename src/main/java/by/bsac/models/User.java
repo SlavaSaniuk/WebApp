@@ -1,7 +1,7 @@
 package by.bsac.models;
 
 import by.bsac.data.validation.Email;
-import by.bsac.services.Sha512Encryptor;
+import by.bsac.services.hashing.Sha512Encryptor;
 import by.bsac.util.Convertor;
 import org.hibernate.annotations.Proxy;
 

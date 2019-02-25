@@ -1,7 +1,8 @@
-package by.bsac.services;
+package by.bsac.services.hashing;
 
 
 import by.bsac.exceptions.NotSameTypesException;
+import by.bsac.services.hashing.AbstractEncryptionService;
 import by.bsac.util.CommonUtils;
 import org.springframework.stereotype.Component;
 
