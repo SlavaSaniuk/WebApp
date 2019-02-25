@@ -1,7 +1,9 @@
 package by.bsac.models;
 
 import by.bsac.data.validation.Email;
-import by.bsac.services.hashing.Sha512Encryptor;
+import by.bsac.services.hashing.EncryptionServiceFactory;
+import by.bsac.services.hashing.EncryptionServiceImpl;
+import by.bsac.services.hashing.HashFunctions;
 import by.bsac.util.Convertor;
 import org.hibernate.annotations.Proxy;
 
@@ -40,7 +42,7 @@ public class User implements Serializable {
 
     //Password encryption object:
     //'transient' - don't serializable
-    private transient Sha512Encryptor password_encryptor = new Sha512Encryptor();
+    private transient EncryptionServiceImpl password_encryptor = EncryptionServiceFactory.getHashService(HashFunctions.SHA512);
 
     //Constructors
 
@@ -68,7 +70,24 @@ public class User implements Serializable {
     }
 
     public void setUserPass(String user_pass) {
-        this.userPass = user_pass;
+
+        //Get generated pass salt:
+        String pass_salt = this.getPassSalt();
+
+        //If pass salt is not generated, then generate pass salt
+        if (pass_salt == null) {
+            setPassSalt();
+            pass_salt = getPassSalt();
+        }
+
+        //Encrypt user password
+        byte[] hash_bytes = this.password_encryptor.encrypt(user_pass, pass_salt.getBytes());
+
+        user_pass = null;
+
+        //Set user password to field
+        this.userPass = Convertor.byteToHexForm(hash_bytes);
+
     }
 
     public String getPassSalt() {
@@ -83,7 +102,7 @@ public class User implements Serializable {
     private void setPassSalt() {
 
         //Generate password salt
-        byte[] generated_salt = this.password_encryptor.getSalt(64);
+        byte[] generated_salt = this.password_encryptor.getSalt();
 
         //Convert to HEX string
         this.passSalt = Convertor.byteToHexForm(generated_salt);
@@ -93,10 +112,10 @@ public class User implements Serializable {
      * Hashing user password with selected hash function.
      * Method should be used after the user entered his password in clear form.
      */
-    public void encryptUserPassword() {
+    /*public void encryptUserPassword() {
 
         //Get generated pass salt:
-        String pass_salt = getPassSalt();
+        String pass_salt = this.getPassSalt();
 
         //If pass salt is not generated, then generate pass salt
         if (pass_salt == null) {
@@ -111,6 +130,7 @@ public class User implements Serializable {
         this.userPass = Convertor.byteToHexForm(hash_bytes);
 
     }
+    */
 
     //Override java.lang.Object methods
 

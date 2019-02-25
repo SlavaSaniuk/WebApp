@@ -39,9 +39,6 @@ public class AuthenticationService {
         if(checked_user != null)
             throw new AuthenticationException(AuthenticationMessages.EMAIL_ALREADY_REGISTERED);
 
-        //Encrypt user password:
-        a_user.encryptUserPassword();
-
         //Create user in database,
         //and get generated ID
         long generated_id = this.user_dao.create(a_user);
