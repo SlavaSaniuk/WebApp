@@ -71,22 +71,7 @@ public class User implements Serializable {
 
     public void setUserPass(String user_pass) {
 
-        //Get generated pass salt:
-        String pass_salt = this.getPassSalt();
-
-        //If pass salt is not generated, then generate pass salt
-        if (pass_salt == null) {
-            setPassSalt();
-            pass_salt = getPassSalt();
-        }
-
-        //Encrypt user password
-        byte[] hash_bytes = this.password_encryptor.encrypt(user_pass, pass_salt.getBytes());
-
-        user_pass = null;
-
-        //Set user password to field
-        this.userPass = Convertor.byteToHexForm(hash_bytes);
+        this.userPass = user_pass;
 
     }
 
@@ -112,7 +97,7 @@ public class User implements Serializable {
      * Hashing user password with selected hash function.
      * Method should be used after the user entered his password in clear form.
      */
-    /*public void encryptUserPassword() {
+    public void hashPassword() {
 
         //Get generated pass salt:
         String pass_salt = this.getPassSalt();
@@ -130,7 +115,7 @@ public class User implements Serializable {
         this.userPass = Convertor.byteToHexForm(hash_bytes);
 
     }
-    */
+
 
     //Override java.lang.Object methods
 

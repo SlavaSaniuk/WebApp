@@ -43,7 +43,9 @@ public class RootController {
 
         //Check on validity users input
         if(errors.hasFieldErrors()) {
+
             user_obj.setUserPass("");
+
             return "index";
         }
 
