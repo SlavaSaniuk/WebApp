@@ -50,4 +50,18 @@ public class UserDetail {
     @Column(name = "city")
     private String city;
 
+    @OneToOne(
+            mappedBy = "user_detail"
+    )
+    private User user_owner;
+
+    //Constructors
+    //Default constructor
+    public UserDetail() {
+
+    }
+
+
+
+
 }

@@ -40,6 +40,10 @@ public class User implements Serializable {
     @Column(name = "pass_salt")
     private String passSalt;
 
+    @OneToOne(optional = false, cascade = CascadeType.ALL)
+    @JoinColumn(name = "user_detail", referencedColumnName = "detail_id", unique = true)
+    private UserDetail user_detail;
+
     //Password encryption object:
     //'transient' - don't serializable
     private transient EncryptionServiceImpl password_encryptor = EncryptionServiceFactory.getHashService(HashFunctions.SHA512);
@@ -70,13 +74,19 @@ public class User implements Serializable {
     }
 
     public void setUserPass(String user_pass) {
-
         this.userPass = user_pass;
-
     }
 
     public String getPassSalt() {
         return passSalt;
+    }
+
+    public UserDetail getUserDetail() {
+        return user_detail;
+    }
+
+    public void setUserDetail(UserDetail user_detail) {
+        this.user_detail = user_detail;
     }
 
     /**
