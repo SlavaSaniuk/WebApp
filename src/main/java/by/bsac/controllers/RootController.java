@@ -1,17 +1,18 @@
 package by.bsac.controllers;
 
-import by.bsac.exceptions.AuthenticationException;
+
+ import by.bsac.exceptions.AuthenticationException;
  import by.bsac.models.User;
-import by.bsac.models.UserDetail;
 import by.bsac.services.AuthenticationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
-import org.springframework.web.bind.annotation.*;
+ import org.springframework.validation.FieldError;
+ import org.springframework.web.bind.annotation.*;
+ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.validation.Valid;
+ import javax.validation.Valid;
 
 /**
  * Controller uses for handing request on '/' path.
@@ -24,8 +25,8 @@ public class RootController {
 
     private AuthenticationService authentication_service;
 
-    @ModelAttribute("user_form_obj")
-    public User getUserFormObj() {
+    @ModelAttribute("userObj")
+    public User getUserObj() {
         return new User();
     }
 
@@ -40,43 +41,54 @@ public class RootController {
 
 
     @PostMapping
-    public String authenticateUser(@ModelAttribute("user_form_obj") @Valid User user_obj, BindingResult errors) {
+    public String authenticateUser(@ModelAttribute("userObj") @Valid User user_obj, BindingResult errors, RedirectAttributes model) {
 
-        //Check on validity users input
-        if(errors.hasFieldErrors()) {
+        //Validate user inputs
+        //If user inputs has errors
+        //Then return to login view
+        if(errors.hasFieldErrors()) return "index";
 
-            user_obj.setUserPass("");
+        //Hold authenticated user
+        User authenticated_user;
 
+        //Try to authenticate user in database
+        try{
 
-            return "index";
-        }
+            authenticated_user = this.authentication_service.authenticateUser(user_obj);
 
-        user_obj.setUserDetail(new UserDetail());
-
-        //Try to register user in system
-        try {
-            User registered_user = authentication_service.registerUser(user_obj);
-
+            //If user not found in database
         }catch (AuthenticationException exc) {
 
-            FieldError email_err = new FieldError("user_form_obj",
-                    "userEmail", user_obj.getUserEmail() + " already registered.");
-            errors.addError(email_err);
+            //Add field error to errors object
+            errors.addError(new FieldError("userObj", "userEmail", exc.getMessage()));
 
-            System.out.println(exc.getMessage());
-
+            //Return to login view
             return "index";
-
         }
 
-        user_obj.setUserPass("");
+        //Check on user authenticated
+        if (authenticated_user == null) {
 
-        return "user";
+            //Add field error to errors object
+            errors.addError(new FieldError("userObj", "userPass", "Password are incorrect"));
+
+            //Return to login view
+            return "index";
+        }
+
+        //Add user object to session as flash attribute
+        model.addFlashAttribute("common_user", authenticated_user);
+
+        //If all 'OK',
+        //Then redirect to user page
+        return "redirect:/user/" +authenticated_user.getUserId();
+
     }
 
+    //Spring beans auto wiring
     @Autowired
-    public void setAuthenticationService(AuthenticationService auth_serv) {
-        this.authentication_service = auth_serv;
+    public void setAuthenticationService(AuthenticationService auth_service) {
+        this.authentication_service = auth_service;
     }
 
 }

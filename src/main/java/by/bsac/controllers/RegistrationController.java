@@ -18,23 +18,27 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import javax.validation.Valid;
 
 /**
- *
+ *  Controller handle http request on "/register" URL.
+ *  GET request return registration page.
+ *  POST request register create new user object with values of entered inputs, try to register them in database,
+ *  and return generated user page.
  */
 @Controller
 @RequestMapping("/register")
 @Scope("request")
 public class RegistrationController {
 
-    /**
-     * {@link by.bsac.services.AuthenticationService} register - used to register users in database.
-     */
+
+    //Used to register users in database.
     private AuthenticationService register;
 
+    //Empty user object
     @ModelAttribute("userObj")
     public User userObj() {
         return new User();
     }
 
+    //Empty UserDetail object
     @ModelAttribute("userDetailObj")
     public UserDetail userDetailObj() {
         return new UserDetail();
@@ -53,7 +57,16 @@ public class RegistrationController {
 
     }
 
-
+    /**
+     * Method registered user in database. Validate user input, set user details to given user,
+     * check if user email already registered in database. Register user and get generated user ID.
+     * Save given user object to session.
+     * @param user - Given user object (have user email, and user clear password).
+     * @param user_detail - Given user detail object.
+     * @param result - object hold fields error.
+     * @param model - {@link javax.servlet.http.HttpSession} - session attributes.
+     * @return - name of user view, or registration view if error occurs.
+     */
     @PostMapping
     public String handingRegistrationRequest(@ModelAttribute("userObj") @Valid User user,
                                              @ModelAttribute("userDetailObj") @Valid UserDetail user_detail,
@@ -66,12 +79,14 @@ public class RegistrationController {
         //Set given user detail object to given user
         user.setUserDetail(user_detail);
 
-        //Create new user object
-        User registered_user;
+        //Variable hold user id;
+        long generated_id;
+
         //Try to register user in database
         try {
 
-            registered_user = this.register.registerUser(user);
+            //Initialize generated ID
+            generated_id = this.register.registerUser(user);
 
             //If email already registered in database
         } catch (AuthenticationException exc) {
@@ -82,17 +97,21 @@ public class RegistrationController {
             return "register";
         }
 
-        //Add user object to session as flash attribute
-        model.addFlashAttribute("common_user", registered_user);
+        //Set generated ID to given user
+        user.setUserId(generated_id);
 
-        //If all 'OK'
-        //Return to user page
-        return "redirect:/user/" +registered_user.getUserId();
+        //Add user object to session as flash attribute
+        model.addFlashAttribute("common_user", user);
+
+        //If all 'OK',
+        //Then redirect to user page
+        return "redirect:/user/" +user.getUserId();
     }
 
+    //Spring bean auto wiring
     @Autowired
-    public void setRegistrer(AuthenticationService auth_srvc) {
-        this.register = auth_srvc;
+    public void setRegister(AuthenticationService auth_service) {
+        this.register = auth_service;
     }
 
 

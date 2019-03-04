@@ -46,7 +46,7 @@ public class User implements Serializable {
 
     //Password encryption object:
     //'transient' - don't serializable
-    private transient EncryptionServiceImpl password_encryptor = EncryptionServiceFactory.getHashService(HashFunctions.SHA512);
+    private static transient EncryptionServiceImpl password_encryptor = EncryptionServiceFactory.getHashService(HashFunctions.SHA512);
 
     //Constructors
 
@@ -59,6 +59,10 @@ public class User implements Serializable {
 
     public long getUserId() {
         return user_id;
+    }
+
+    public void setUserId(long user_id) {
+        this.user_id = user_id;
     }
 
     public String getUserEmail() {
@@ -74,11 +78,23 @@ public class User implements Serializable {
     }
 
     public void setUserPass(String user_pass) {
+
+        //Set user password
         this.userPass = user_pass;
+
     }
 
     public String getPassSalt() {
         return passSalt;
+    }
+
+    private void setPassSalt() {
+
+        //Generate password salt
+        byte[] generated_salt = password_encryptor.getSalt();
+
+        //Convert to HEX string
+        this.passSalt = Convertor.byteToHexForm(generated_salt);
     }
 
     public UserDetail getUserDetail() {
@@ -89,46 +105,34 @@ public class User implements Serializable {
         this.user_detail = user_detail;
     }
 
-    /**
-     * Method generating random 128 byte string for column password salt 'pass_salt';
-     * Uses for register user in database.
-     * By this column definition (On class FIELD) JPA provider direct get/set values to object fields.
-     */
-    private void setPassSalt() {
 
-        //Generate password salt
-        byte[] generated_salt = this.password_encryptor.getSalt();
-
-        //Convert to HEX string
-        this.passSalt = Convertor.byteToHexForm(generated_salt);
-    }
 
     /**
-     * Hashing user password with selected hash function.
-     * Method should be used after the user entered his password in clear form.
+     * Hashing user password with given passwords salt.
+     * Hashing by SHA-512 algorithm.
      */
-    public void hashPassword() {
-
-        //Get generated pass salt:
-        String pass_salt = this.getPassSalt();
-
-        //If pass salt is not generated, then generate pass salt
-        if (pass_salt == null) {
-            this.setPassSalt();
-            pass_salt = this.getPassSalt();
-        }
+    public static String hashPassword(String user_pass, String pass_salt) {
 
         //Encrypt user password
-        byte[] hash_bytes = this.password_encryptor.encrypt(this.getUserPass(), pass_salt.getBytes());
+        byte[] hash_bytes = password_encryptor.encrypt(user_pass, pass_salt.getBytes());
 
-        //Set user password to field
-        this.userPass = Convertor.byteToHexForm(hash_bytes);
+        //Return password hash as String
+        return Convertor.byteToHexForm(hash_bytes);
+
+    }
+
+    public void prepareToPersist() {
+
+        //Generate password salt
+        this.setPassSalt();
+
+        //Hashing user password
+        this.userPass = hashPassword(getUserPass(), getPassSalt());
 
     }
 
 
     //Override java.lang.Object methods
-
     @Override
     public int hashCode() {
 
