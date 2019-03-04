@@ -2,6 +2,7 @@ package by.bsac.controllers;
 
 import by.bsac.exceptions.AuthenticationException;
  import by.bsac.models.User;
+import by.bsac.models.UserDetail;
 import by.bsac.services.AuthenticationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
@@ -46,9 +47,11 @@ public class RootController {
 
             user_obj.setUserPass("");
 
+
             return "index";
         }
 
+        user_obj.setUserDetail(new UserDetail());
 
         //Try to register user in system
         try {
@@ -68,7 +71,7 @@ public class RootController {
 
         user_obj.setUserPass("");
 
-        return "index";
+        return "user";
     }
 
     @Autowired

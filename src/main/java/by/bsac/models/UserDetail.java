@@ -16,6 +16,10 @@ import java.time.LocalDate;
 @Table(name = "user_detail")
 public class UserDetail {
 
+    /*
+        Global class variables
+     */
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "detail_id")
@@ -41,7 +45,6 @@ public class UserDetail {
     private int age;
 
     @Column(name = "sex")
-    @Size(max = 1)
     private char sex;
 
     @Column(name = "country")
@@ -50,18 +53,93 @@ public class UserDetail {
     @Column(name = "city")
     private String city;
 
-    @OneToOne(
-            mappedBy = "user_detail"
-    )
+    @OneToOne( mappedBy = "user_detail" )
     private User user_owner;
 
-    //Constructors
+    /*
+        Constructors
+     */
+
     //Default constructor
     public UserDetail() {
 
     }
 
+    /*
+        Class methods
+     */
 
+    //  Getters and setters
+    public String getfName() {
+        return fName;
+    }
 
+    public void setfName(String fName) {
+        this.fName = fName;
+    }
+
+    public String getlName() {
+        return lName;
+    }
+
+    public void setlName(String lName) {
+        this.lName = lName;
+    }
+
+    public LocalDate getBirthDate() {
+        return birthDate;
+    }
+
+    public void setBirthDate(String birthDate) {
+
+        //Split entered field on date fields(e.g. YEAR, DAY ..)
+        String[] date_fields = birthDate.split("-");
+
+        //Create new Local data object
+        LocalDate bd = LocalDate.of(Integer.parseInt(date_fields[0]), Integer.parseInt(date_fields[1]), Integer.parseInt(date_fields[2]));
+
+        //Mapping
+        this.birthDate = bd;
+    }
+
+    public int getAge() {
+        return age;
+    }
+
+    public void setAge(int age) {
+        this.age = age;
+    }
+
+    public char getSex() {
+        return sex;
+    }
+
+    public void setSex(char sex) {
+        this.sex = sex;
+    }
+
+    public String getCountry() {
+        return country;
+    }
+
+    public void setCountry(String country) {
+        this.country = country;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
+
+    public long getDetailId() {
+        return this.detail_id;
+    }
+
+    public User getUserOwner() {
+        return this.user_owner;
+    }
 
 }

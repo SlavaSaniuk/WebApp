@@ -114,8 +114,8 @@ public class User implements Serializable {
 
         //If pass salt is not generated, then generate pass salt
         if (pass_salt == null) {
-            setPassSalt();
-            pass_salt = getPassSalt();
+            this.setPassSalt();
+            pass_salt = this.getPassSalt();
         }
 
         //Encrypt user password

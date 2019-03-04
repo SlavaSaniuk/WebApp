@@ -17,14 +17,14 @@ CREATE TABLE user (
   Create table 'user_detail'.
  */
 CREATE TABLE user_detail (
-                              detail_id INT(8) PRIMARY KEY AUTO_INCREMENT NOT NULL,
-                              fname VARCHAR(20) NOT NULL,
-                              lname VARCHAR(20) NOT NULL,
-                              birth_date DATE NOT NULL,
-                              age INT(3) NOT NULL,
-                              sex CHAR(1),
-                              country VARCHAR(20),
-                              city VARCHAR(20)
+  detail_id INT(8) PRIMARY KEY AUTO_INCREMENT NOT NULL,
+  fname VARCHAR(20) NOT NULL,
+  lname VARCHAR(20) NOT NULL,
+  birth_date DATE NOT NULL,
+  age INT(3) NOT NULL,
+  sex CHAR(1),
+  country VARCHAR(20),
+  city VARCHAR(20)
 );
 
 /*

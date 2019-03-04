@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title> Registration </title>
+</head>
+<body>
+
+    <h2> Registration form </h2>
+
+    <form method="post" th:action="@{/register}" >
+        <div th:object="${userObj}">
+        <!--
+            User object:
+                User email field:
+        -->
+        <input type="text" value="userEmail" placeholder="Your email"
+               th:field="*{userEmail}"  />
+        <!--   User password field:  -->
+        <input type="text" value="userPass" placeholder="Enter password"
+               th:field="*{userPass}"  />
+        </div>
+
+        <hr>
+        <div th:object="${userDetailObj}">
+        <!--
+            User detail object:
+                First name (fname) field:
+        -->
+        <input type="text" value="fname" placeholder="Your first name"
+               th:field="*{fName}" />
+        <!--    Last name (lname) field: -->
+        <input type="text" value="lname" placeholder="Your last name"
+               th:field="*{lName}" />
+
+        <hr>
+        <!--    Birth date (birthDate) field: -->
+        <input type="text" value="birthDate" placeholder="Your birth date 2017-11-23"
+               th:field="*{birthDate}" />
+        <!--    User age (age) field: -->
+        <input type="text" value="age" placeholder="Your age"
+               th:field="*{age}" />
+
+        <hr>
+        <!--    Sex (sex) field: -->
+        <input type="text" value="sex" placeholder="Your sex ('m' or 'f') "
+               th:field="*{sex}" />
+
+        <hr>
+        <!--    Country (country) field: -->
+        <input type="text" value="country" placeholder="Your home country"
+               th:field="*{country}" />
+        <!--    City (city) field: -->
+        <input type="text" value="city" placeholder="Your home city"
+               th:field="*{city}" />
+        </div>
+        <input type="submit" value="Go">
+
+    </form>
+
+</body>
+</html>
