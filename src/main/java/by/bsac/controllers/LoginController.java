@@ -1,18 +1,17 @@
 package by.bsac.controllers;
 
 
- import by.bsac.exceptions.AuthenticationException;
- import by.bsac.models.User;
+import by.bsac.models.User;
 import by.bsac.services.AuthenticationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
- import org.springframework.validation.FieldError;
- import org.springframework.web.bind.annotation.*;
- import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
- import javax.validation.Valid;
+import javax.validation.Valid;
 
 /**
  * Controller uses for handing request on '/' path.
@@ -21,8 +20,9 @@ import org.springframework.validation.BindingResult;
 @Controller
 @RequestMapping("/")
 @Scope("request")
-public class RootController {
+public class LoginController {
 
+    //Authentication service bean
     private AuthenticationService authentication_service;
 
     @ModelAttribute("userObj")
@@ -32,14 +32,22 @@ public class RootController {
 
     /**
      * Method handing HTTP GET request.
-     * @return - logical view name.
+     * @return - login view name (index.html).
      */
     @GetMapping
     public String getRootView() {
         return "index";
     }
 
-
+    /**
+     * Authenticate user in system. Validate user inputs, search user object in database, compare passwords,
+     * and set user object to user session.
+     * @param user_obj - Common user object (With specified email and clear password).
+     * @param errors - Object hold error on user inputs.
+     * @param model - Session attributes.
+     * @return - user view name (/user/user_id.html), or "index.html", if authenticate process is failed
+     * or user inputs has errors.
+     */
     @PostMapping
     public String authenticateUser(@ModelAttribute("userObj") @Valid User user_obj, BindingResult errors, RedirectAttributes model) {
 
@@ -48,29 +56,15 @@ public class RootController {
         //Then return to login view
         if(errors.hasFieldErrors()) return "index";
 
-        //Hold authenticated user
-        User authenticated_user;
-
         //Try to authenticate user in database
-        try{
+        User authenticated_user = this.authentication_service.authenticateUser(user_obj);
 
-            authenticated_user = this.authentication_service.authenticateUser(user_obj);
-
-            //If user not found in database
-        }catch (AuthenticationException exc) {
-
-            //Add field error to errors object
-            errors.addError(new FieldError("userObj", "userEmail", exc.getMessage()));
-
-            //Return to login view
-            return "index";
-        }
-
-        //Check on user authenticated
+        //If user is not authenticated
+        //Then return to login view
         if (authenticated_user == null) {
 
             //Add field error to errors object
-            errors.addError(new FieldError("userObj", "userPass", "Password are incorrect"));
+            errors.addError(new FieldError("userObj", "userPass", "Email or password is incorrect"));
 
             //Return to login view
             return "index";

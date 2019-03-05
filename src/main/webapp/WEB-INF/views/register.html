@@ -33,18 +33,19 @@
         <input type="text" value="lname" placeholder="Your last name"
                th:field="*{lName}" />
 
-        <hr>
         <!--    Birth date (birthDate) field: -->
-        <input type="text" value="birthDate" placeholder="Your birth date 2017-11-23"
-               th:field="*{birthDate}" />
-        <!--    User age (age) field: -->
-        <input type="text" value="age" placeholder="Your age"
-               th:field="*{age}" />
+        <input type="date" value="birthDate" placeholder="Your birth date 2017-11-23"
+               th:field="*{birthDate}" min="1970-01-01" max="2019-12-31" />
 
         <hr>
-        <!--    Sex (sex) field: -->
-        <input type="text" value="sex" placeholder="Your sex ('m' or 'f') "
-               th:field="*{sex}" />
+
+        <input type="radio" id="male" value="m" name="gender"
+               th:field="*{sex}" th:value="m" th:id="male" th:name="gender"  />
+        <label for="male" th:text="male" th:for="male"> male </label>
+        <input type="radio" id="female" value="f" name="gender"
+               th:field="*{sex}" th:value="f" th:id="female" th:name="gender"  />
+        <label for="female" th:text="female" th:for="female"> female </label>
+
 
         <hr>
         <!--    Country (country) field: -->

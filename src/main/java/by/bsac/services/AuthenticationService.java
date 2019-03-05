@@ -61,14 +61,14 @@ public class AuthenticationService {
     }
 
     @Nullable
-    public User authenticateUser(User a_user) throws AuthenticationException {
+    public User authenticateUser(User a_user) {
 
         //Search user in database by email
         User founded_user = user_dao.findByEmail(a_user.getUserEmail());
 
         //If user not found
         //Then throw authentication exception
-        if (founded_user == null) throw new AuthenticationException(AuthenticationMessages.EMAIL_NOT_FOUND);
+        if (founded_user == null) return null;
 
         //Hashing entered password
         //with password salt of founded user

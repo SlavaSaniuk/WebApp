@@ -6,7 +6,9 @@ import javax.persistence.*;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.io.Serializable;
 import java.time.LocalDate;
+import java.time.Period;
 
 /**
  *
@@ -14,7 +16,7 @@ import java.time.LocalDate;
 @Entity
 @Proxy(lazy = false)
 @Table(name = "user_detail")
-public class UserDetail {
+public class UserDetail implements Serializable {
 
     /*
         Global class variables
@@ -92,21 +94,26 @@ public class UserDetail {
 
     public void setBirthDate(String birthDate) {
 
-        //Split entered field on date fields(e.g. YEAR, DAY ..)
-        String[] date_fields = birthDate.split("-");
-
         //Create new Local data object
-        LocalDate bd = LocalDate.of(Integer.parseInt(date_fields[0]), Integer.parseInt(date_fields[1]), Integer.parseInt(date_fields[2]));
+        LocalDate bd = LocalDate.parse(birthDate);
 
         //Mapping
         this.birthDate = bd;
+
+        //Calculate users age
+        //Get period between given date and current date
+        Period full_age = Period.between(bd, LocalDate.now());
+
+        //Set user age
+        this.setAge(full_age.getYears());
+
     }
 
     public int getAge() {
         return age;
     }
 
-    public void setAge(int age) {
+    private void setAge(int age) {
         this.age = age;
     }
 
@@ -142,4 +149,17 @@ public class UserDetail {
         return this.user_owner;
     }
 
+
+
+    //Override java.lang.Object methods
+    @Override
+    public String toString() {
+        return this.detail_id +": " +fName + " " +lName + " : " +birthDate.toString() +" - " +age +
+                ": " +sex +": " +country + ", " +city;
+    }
+
+    //Custom methods
+    public String getFullName() {
+        return this.fName + " " +this.lName;
+    }
 }

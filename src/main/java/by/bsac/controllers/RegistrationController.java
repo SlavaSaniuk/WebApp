@@ -7,13 +7,10 @@ import by.bsac.services.AuthenticationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
@@ -26,6 +23,7 @@ import javax.validation.Valid;
 @Controller
 @RequestMapping("/register")
 @Scope("request")
+@SessionAttributes("common_user")
 public class RegistrationController {
 
 
@@ -70,7 +68,7 @@ public class RegistrationController {
     @PostMapping
     public String handingRegistrationRequest(@ModelAttribute("userObj") @Valid User user,
                                              @ModelAttribute("userDetailObj") @Valid UserDetail user_detail,
-                                             BindingResult result, RedirectAttributes model) {
+                                             BindingResult result, Model model) {
 
         //Validate user input
         //If user inputs has errors, return back
@@ -101,7 +99,8 @@ public class RegistrationController {
         user.setUserId(generated_id);
 
         //Add user object to session as flash attribute
-        model.addFlashAttribute("common_user", user);
+        model.addAttribute("common_user", user);
+
 
         //If all 'OK',
         //Then redirect to user page
