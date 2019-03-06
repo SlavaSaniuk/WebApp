@@ -8,6 +8,8 @@ import org.springframework.web.servlet.DispatcherServlet;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRegistration;
+import javax.servlet.SessionTrackingMode;
+import java.util.EnumSet;
 
 /**
  *  Main class of Web App.
@@ -51,6 +53,9 @@ public class ApplicationStarter implements WebApplicationInitializer {
 
         //If ServletContext = null, throw exception
         if(servletContext == null) throw new ServletException();
+
+        //Disable JSESSIONID in URL
+        servletContext.setSessionTrackingModes(EnumSet.of(SessionTrackingMode.COOKIE));
 
         //Set servlet context
         web_ctx.setServletContext(servletContext);

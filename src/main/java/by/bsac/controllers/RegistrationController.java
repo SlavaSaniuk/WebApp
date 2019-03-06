@@ -11,6 +11,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
 
@@ -23,7 +24,6 @@ import javax.validation.Valid;
 @Controller
 @RequestMapping("/register")
 @Scope("request")
-@SessionAttributes("common_user")
 public class RegistrationController {
 
 
@@ -98,7 +98,7 @@ public class RegistrationController {
         //Set generated ID to given user
         user.setUserId(generated_id);
 
-        //Add user object to session as flash attribute
+        //Add user object to session as attribute
         model.addAttribute("common_user", user);
 
 
