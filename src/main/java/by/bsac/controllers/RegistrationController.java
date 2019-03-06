@@ -7,12 +7,11 @@ import by.bsac.services.AuthenticationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 /**
@@ -62,13 +61,13 @@ public class RegistrationController {
      * @param user - Given user object (have user email, and user clear password).
      * @param user_detail - Given user detail object.
      * @param result - object hold fields error.
-     * @param model - {@link javax.servlet.http.HttpSession} - session attributes.
+     * @param a_req - {@link javax.servlet.http.HttpSession} - session attributes.
      * @return - name of user view, or registration view if error occurs.
      */
     @PostMapping
     public String handingRegistrationRequest(@ModelAttribute("userObj") @Valid User user,
                                              @ModelAttribute("userDetailObj") @Valid UserDetail user_detail,
-                                             BindingResult result, Model model) {
+                                             BindingResult result, HttpServletRequest a_req) {
 
         //Validate user input
         //If user inputs has errors, return back
@@ -99,8 +98,7 @@ public class RegistrationController {
         user.setUserId(generated_id);
 
         //Add user object to session as attribute
-        model.addAttribute("common_user", user);
-
+        a_req.getSession(true).setAttribute("common_user", user);
 
         //If all 'OK',
         //Then redirect to user page

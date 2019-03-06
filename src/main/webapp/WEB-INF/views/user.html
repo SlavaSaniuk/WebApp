@@ -2,9 +2,11 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title th:text="${session.common_user.getUserDetail().getFullName()}"> Hello  </title>
+    <title th:text="${user_inf.getFullName()}"> Hello </title>
 </head>
 <body>
-<p> Hello user! </p>
+<p th:text="'Hello ' +${user_inf.getFullName()}"> Hello Fname Lname  </p>
+
+<a href="#" th:href="@{/friends}" > My friends </a>
 </body>
 </html>

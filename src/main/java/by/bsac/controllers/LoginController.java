@@ -6,12 +6,11 @@ import by.bsac.services.AuthenticationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 /**
@@ -21,7 +20,6 @@ import javax.validation.Valid;
 @Controller
 @RequestMapping("/")
 @Scope("request")
-@SessionAttributes("common_user")
 public class LoginController {
 
     //Authentication service bean
@@ -46,12 +44,13 @@ public class LoginController {
      * and set user object to user session.
      * @param user_obj - Common user object (With specified email and clear password).
      * @param errors - Object hold error on user inputs.
-     * @param model - Session attributes.
+     * @param a_req - Session attributes.
      * @return - user view name (/user/user_id.html), or "index.html", if authenticate process is failed
      * or user inputs has errors.
      */
     @PostMapping
-    public String authenticateUser(@ModelAttribute("userObj") @Valid User user_obj, BindingResult errors, Model model) {
+    public String authenticateUser(@ModelAttribute("userObj") @Valid User user_obj,
+                                   BindingResult errors, HttpServletRequest a_req) {
 
         //Validate user inputs
         //If user inputs has errors
@@ -72,8 +71,8 @@ public class LoginController {
             return "index";
         }
 
-        //Add user object to session as flash attribute
-        model.addAttribute("common_user", authenticated_user);
+        //Add user object to session as attribute
+        a_req.getSession(true).setAttribute("common_user", authenticated_user);
 
         //If all 'OK',
         //Then redirect to user page
