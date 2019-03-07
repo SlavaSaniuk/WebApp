@@ -31,3 +31,14 @@ CREATE TABLE user_detail (
   Add foreign key to user.user_detail which referenced on user_detail.detail_id.
  */
 ALTER TABLE user ADD FOREIGN KEY (user_detail) REFERENCES user_detail(detail_id) ON DELETE CASCADE;
+
+/*
+  Create table "friends_relationships"
+ */
+CREATE TABLE friends_relationships (
+  relationship_id INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
+  friend_1_id INT(8) NOT NULL,
+  friend_2_id INT(8) NOT NULL,
+  FOREIGN KEY (friend_1_id) REFERENCES user(user_id),
+  FOREIGN KEY (friend_2_id) REFERENCES user(user_id)
+);

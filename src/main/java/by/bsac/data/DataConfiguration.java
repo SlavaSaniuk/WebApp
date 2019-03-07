@@ -1,5 +1,7 @@
 package by.bsac.data;
 
+import by.bsac.data.dao.FriendsDao;
+import by.bsac.data.dao.FriendsDaoImpl;
 import by.bsac.data.dao.UserDao;
 import by.bsac.data.dao.UserDaoImpl;
 import org.springframework.beans.factory.annotation.Value;
@@ -205,6 +207,7 @@ public class DataConfiguration{
     /*
      * Data access beans
      */
+
     @Bean(name = "user_dao")
     @Description("User DAO implementation")
     public UserDao getUserDaoImplementation() {
@@ -212,6 +215,12 @@ public class DataConfiguration{
         //Return statement
         return new UserDaoImpl();
 
+    }
+
+    @Bean(name = "friends_dao")
+    @Description("Friends DAO implementation")
+    public FriendsDao getFriendsDaoUserImplementation() {
+        return new FriendsDaoImpl();
     }
 
 }
