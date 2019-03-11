@@ -1,8 +1,11 @@
 package by.bsac.data.dao;
 
+import by.bsac.models.FriendsRelationship;
 import by.bsac.models.User;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.List;
@@ -17,10 +20,19 @@ public class FriendsDaoImpl implements FriendsDao {
     private EntityManager em;
 
     @Override
-    public void addFriend(User common_user, User a_friend) {
+    @Transactional
+    public void create(User common_user, User a_friend) {
 
-        common_user.getFriends().add(a_friend);
-        this.em.persist(common_user);
+        //Create new friends relationship
+        FriendsRelationship rel = new FriendsRelationship(common_user, a_friend);
+
+        //Persist it into database
+        try {
+            this.em.persist(rel);
+        }catch (EntityExistsException exc) {
+            exc.printStackTrace();
+        }
+
 
     }
 

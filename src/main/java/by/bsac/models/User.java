@@ -11,8 +11,6 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  *  Class represent a common user object.
@@ -46,13 +44,6 @@ public class User implements Serializable {
     @JoinColumn(name = "user_detail", referencedColumnName = "detail_id", unique = true)
     private UserDetail user_detail;
 
-    @ManyToMany
-    @JoinTable(
-            name = "friends_relationships",
-            joinColumns = @JoinColumn(name = "friend_1_id")
-    )
-    private Set<User> friends = new HashSet<>();
-
     //Password encryption object:
     //'transient' - don't serializable
     private static transient EncryptionServiceImpl password_encryptor = EncryptionServiceFactory.getHashService(HashFunctions.SHA512);
@@ -62,7 +53,8 @@ public class User implements Serializable {
     /**
      * Default constructor. Used by hibernate to create new Object from relation form.
      */
-    public User() {}
+    public User() {
+    }
 
     //Getters and setters
 
@@ -115,7 +107,6 @@ public class User implements Serializable {
     }
 
 
-
     /**
      * Hashing user password with given passwords salt.
      * Hashing by SHA-512 algorithm.
@@ -156,7 +147,7 @@ public class User implements Serializable {
         result = prime * result + ((this.getUserEmail() == null) ? 0 : this.getUserEmail().hashCode());
 
         //ternary operator
-        result = prime * result +((this.getUserPass() == null) ? 0 : this.getUserPass().hashCode());
+        result = prime * result + ((this.getUserPass() == null) ? 0 : this.getUserPass().hashCode());
 
         return result;
 
@@ -166,7 +157,7 @@ public class User implements Serializable {
     public boolean equals(Object obj) {
 
         //Check for reference on same memory cell
-        if(obj == this) return true;
+        if (obj == this) return true;
 
         //Check for null and same types
         if (obj == null || obj.getClass() != this.getClass()) return false;
@@ -182,16 +173,8 @@ public class User implements Serializable {
     @Override
     public String toString() {
 
-        return this.getUserId() +": " +this.getUserEmail();
+        return this.getUserId() + ": " + this.getUserEmail();
 
     }
 
-
-    public Set<User> getFriends() {
-        return friends;
-    }
-
-    public void setFriends(Set<User> friends) {
-        this.friends = friends;
-    }
 }

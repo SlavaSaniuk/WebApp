@@ -30,13 +30,19 @@ public class UserController {
         return "user";
     }
 
-    @PostMapping
-    public String handlePostMethod(@ModelAttribute("given_user") User given_user, HttpServletRequest a_req) {
+    @RequestMapping(method = RequestMethod.POST, value = "/user/{user_id}")
+    public String handlePostMethod(@PathVariable("user_id") long user_id, HttpServletRequest a_req) {
 
         //Get common user object from session
         User common_user = (User) a_req.getSession(false).getAttribute("common_user");
+        System.out.println(common_user.getUserEmail());
 
-        friends_dao.addFriend(common_user, given_user);
+        //Get adding user object from db
+        User given_user = this.user_dao.findById(user_id);
+        System.out.println(given_user.getUserEmail());
+
+        //Establish friendships
+        this.friends_dao.create(common_user, given_user);
 
         //Return name of user view
         return "user";

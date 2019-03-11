@@ -12,7 +12,7 @@ public class UserWrapper {
 
     }
 
-
+    //Methods
     public String getFullName() {
         return this.common_user.getUserDetail().getfName() + this.common_user.getUserDetail().getlName();
     }

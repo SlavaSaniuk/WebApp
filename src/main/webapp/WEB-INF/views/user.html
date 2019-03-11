@@ -2,17 +2,14 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title th:text="${given_user.getUserDetail().getName()}"> Hello </title>
+    <title th:text="${given_user.getUserDetail().getfName()}"> Hello </title>
 </head>
 <body>
 
     <a href="#" th:href="@{/friends}" > My friends </a>
 
-    <div>
-        <form method="post" action="/" th:action="'/user/' +${given_user.getUserId()}" th:object="${given_user}" >
-            <input type="submit" th:value="Add to friends">
-        </form>
-    </div>
-
+    <form action="#" th:action="@{'/user/' +${given_user.getUserId()}}" method="post">
+        <input type="submit" value="Add to friend" />
+    </form>
 </body>
 </html>
