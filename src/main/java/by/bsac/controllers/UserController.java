@@ -2,6 +2,7 @@ package by.bsac.controllers;
 
 import by.bsac.data.dao.FriendsDao;
 import by.bsac.data.dao.UserDao;
+import by.bsac.models.FriendsRelationship;
 import by.bsac.models.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -9,6 +10,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Set;
 
 /**
  *
@@ -35,14 +37,21 @@ public class UserController {
 
         //Get common user object from session
         User common_user = (User) a_req.getSession(false).getAttribute("common_user");
-        System.out.println(common_user.getUserEmail());
 
         //Get adding user object from db
         User given_user = this.user_dao.findById(user_id);
-        System.out.println(given_user.getUserEmail());
 
         //Establish friendships
         this.friends_dao.create(common_user, given_user);
+
+        //Get relationships
+        Set<FriendsRelationship> a = common_user.getInvitedMeFriends();
+        System.out.println(a.size());
+        for (FriendsRelationship rel : a) System.out.println(rel.toString());
+
+        Set<FriendsRelationship> b = common_user.getMyInvitedFriends();
+        System.out.println(a.size());
+        for (FriendsRelationship rel : b) System.out.println(rel.toString());
 
         //Return name of user view
         return "user";

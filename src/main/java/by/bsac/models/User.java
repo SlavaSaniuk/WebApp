@@ -11,6 +11,8 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  *  Class represent a common user object.
@@ -43,6 +45,12 @@ public class User implements Serializable {
     @OneToOne(optional = false, cascade = CascadeType.ALL)
     @JoinColumn(name = "user_detail", referencedColumnName = "detail_id", unique = true)
     private UserDetail user_detail;
+
+    @OneToMany(mappedBy = "friend_1_id", fetch=FetchType.EAGER)
+    private Set<FriendsRelationship> my_invited_friends = new HashSet<>();
+
+    @OneToMany(mappedBy = "friend_2_id", fetch=FetchType.EAGER)
+    private Set<FriendsRelationship> invited_me_friends = new HashSet<>();
 
     //Password encryption object:
     //'transient' - don't serializable
@@ -177,4 +185,11 @@ public class User implements Serializable {
 
     }
 
+    public Set<FriendsRelationship> getMyInvitedFriends() {
+        return my_invited_friends;
+    }
+
+    public Set<FriendsRelationship> getInvitedMeFriends() {
+        return invited_me_friends;
+    }
 }

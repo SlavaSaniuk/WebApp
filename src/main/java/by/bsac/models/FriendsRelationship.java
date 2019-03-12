@@ -1,9 +1,12 @@
 package by.bsac.models;
 
+import org.hibernate.annotations.Proxy;
+
 import javax.persistence.*;
 import java.io.Serializable;
 
 @Entity
+@Proxy(lazy = false)
 @Table(name = "friends_relationships")
 public class FriendsRelationship implements Serializable {
 
@@ -34,4 +37,9 @@ public class FriendsRelationship implements Serializable {
     }
 
 
+    //Override java.lang.Object
+    @Override
+    public String toString() {
+        return relationship_id + ": " +friend_1_id.getUserEmail() + " -> " +friend_2_id.getUserEmail();
+    }
 }
