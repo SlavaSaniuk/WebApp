@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.List;
+import java.util.Set;
 
 @Controller
 @RequestMapping(value = "/friends")
@@ -20,10 +20,10 @@ public class FriendsController {
     @GetMapping
     public String getFriendsPage(Model a_model, HttpServletRequest a_req) {
 
-        //Get common user object from session
-        User common_user = (User) a_req.getSession(false).getAttribute("common_user");
+        //Get common user wrapper object from session
+        User common_user_wrapper = (User) a_req.getSession(false).getAttribute("common_user");
 
-        List<User> friends_list = user_dao.findAll();
+        Set<User> friends_list = common_user_wrapper.getMyInvitedFriends();
 
         a_model.addAttribute("friends_list", friends_list);
 

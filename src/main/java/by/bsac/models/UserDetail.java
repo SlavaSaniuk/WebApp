@@ -158,8 +158,4 @@ public class UserDetail implements Serializable {
                 ": " +sex +": " +country + ", " +city;
     }
 
-    //Custom methods
-    public String getFullName() {
-        return this.fName + " " +this.lName;
-    }
 }

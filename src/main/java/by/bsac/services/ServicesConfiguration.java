@@ -1,6 +1,8 @@
 package by.bsac.services;
 
+import by.bsac.data.dao.FriendsDao;
 import by.bsac.data.dao.UserDao;
+import by.bsac.services.users.FriendsManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -13,13 +15,29 @@ import javax.annotation.Resource;
 @Configuration
 public class ServicesConfiguration {
 
-    //Bean from data configuration class
+    //Beans from data configuration class
     @Resource
     private UserDao user_dao;
+
+    @Resource
+    private FriendsDao friends_dao;
 
     @Bean
     public AuthenticationService createAuthenticationService() {
         return new AuthenticationService(user_dao);
+    }
+
+    @Bean(name = "friends_manager")
+    public FriendsManager getFriendsManager() {
+
+        //Create empty friends manager bean
+        FriendsManager fm = new FriendsManager();
+
+        //Set friends DAO implementation
+        fm.setFriendsDao(this.friends_dao);
+
+        //Return them
+        return fm;
     }
 
 

@@ -46,10 +46,10 @@ public class User implements Serializable {
     @JoinColumn(name = "user_detail", referencedColumnName = "detail_id", unique = true)
     private UserDetail user_detail;
 
-    @OneToMany(mappedBy = "friend_1_id", fetch=FetchType.EAGER)
+    @OneToMany(mappedBy = "friend_master", fetch=FetchType.EAGER)
     private Set<FriendsRelationship> my_invited_friends = new HashSet<>();
 
-    @OneToMany(mappedBy = "friend_2_id", fetch=FetchType.EAGER)
+    @OneToMany(mappedBy = "friend_slave", fetch=FetchType.EAGER)
     private Set<FriendsRelationship> invited_me_friends = new HashSet<>();
 
     //Password encryption object:
@@ -114,6 +114,29 @@ public class User implements Serializable {
         this.user_detail = user_detail;
     }
 
+    public Set<User> getMyInvitedFriends() {
+
+        //Create empty set
+        Set<User> friends = new HashSet<>();
+
+        //Get friends from relationships
+        for (FriendsRelationship rel : this.my_invited_friends ) friends.add(rel.getFriendshipSlave());
+
+        //Return set
+        return friends;
+    }
+
+    public Set<User> getInvitedMeFriends() {
+
+        //Create empty set
+        Set<User> friends = new HashSet<>();
+
+        //Get friends from relationships
+        for (FriendsRelationship rel : this.invited_me_friends ) friends.add(rel.getFriendshipSlave());
+
+        //Return set
+        return friends;
+    }
 
     /**
      * Hashing user password with given passwords salt.
@@ -129,6 +152,7 @@ public class User implements Serializable {
 
     }
 
+    //Custom methods
     public void prepareToPersist() {
 
         //Generate password salt
@@ -139,6 +163,9 @@ public class User implements Serializable {
 
     }
 
+    public UserWrapper wrap() {
+        return new UserWrapper(this);
+    }
 
     //Override java.lang.Object methods
     @Override
@@ -185,11 +212,5 @@ public class User implements Serializable {
 
     }
 
-    public Set<FriendsRelationship> getMyInvitedFriends() {
-        return my_invited_friends;
-    }
 
-    public Set<FriendsRelationship> getInvitedMeFriends() {
-        return invited_me_friends;
-    }
 }

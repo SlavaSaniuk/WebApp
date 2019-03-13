@@ -21,12 +21,9 @@ public class FriendsDaoImpl implements FriendsDao {
 
     @Override
     @Transactional
-    public void create(User common_user, User a_friend) {
+    public void create(FriendsRelationship rel) {
 
-        //Create new friends relationship
-        FriendsRelationship rel = new FriendsRelationship(common_user, a_friend);
-
-        //Persist it into database
+        //Persist relationship into database
         try {
             this.em.persist(rel);
         }catch (EntityExistsException exc) {

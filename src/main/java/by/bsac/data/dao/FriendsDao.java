@@ -1,5 +1,6 @@
 package by.bsac.data.dao;
 
+import by.bsac.models.FriendsRelationship;
 import by.bsac.models.User;
 
 import java.util.List;
@@ -10,7 +11,7 @@ import java.util.List;
 public interface FriendsDao {
 
     /** Interface methods */
-    void create(User common_user, User a_friend);
+    void create(FriendsRelationship rel);
 
     void removeFriend(User a_user);
 

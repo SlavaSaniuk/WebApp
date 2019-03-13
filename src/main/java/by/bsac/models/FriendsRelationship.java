@@ -17,11 +17,11 @@ public class FriendsRelationship implements Serializable {
 
     @ManyToOne
     @JoinColumn(name = "friend_1_id")
-    private User friend_1_id;
+    private User friend_master;
 
     @ManyToOne
     @JoinColumn(name = "friend_2_id")
-    private User friend_2_id;
+    private User friend_slave;
 
     // Constructors
     public FriendsRelationship() {
@@ -31,15 +31,26 @@ public class FriendsRelationship implements Serializable {
     public FriendsRelationship(User common_user, User adding_user) {
 
         //Mapping
-        this.friend_1_id = common_user;
-        this.friend_2_id = adding_user;
+        this.friend_master = common_user;
+        this.friend_slave = adding_user;
 
     }
 
+    //Methods
+    //Getters and setters
+    public User getFriendshipMaster() {
+        return friend_master;
+    }
+
+    public User getFriendshipSlave() {
+        return friend_slave;
+    }
 
     //Override java.lang.Object
     @Override
     public String toString() {
-        return relationship_id + ": " +friend_1_id.getUserEmail() + " -> " +friend_2_id.getUserEmail();
+        return relationship_id + ": " +friend_master.getUserEmail() + " -> " +friend_slave.getUserEmail();
     }
+
+
 }

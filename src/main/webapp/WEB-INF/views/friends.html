@@ -5,15 +5,15 @@
     <title> My friends </title>
 </head>
 <body>
+
     <h3> Friends list </h3>
 
-    <div>
+
 
         <div th:each="friend : ${friends_list}">
-            <a href="#" th:href="@{'/user/' +${friend.getUserId()}}" th:text="${friend.getUserDetail().getFullName()}"> Fname Lname</a>
+            <a href="#" th:href="@{'/user/' +${friend.getUserId()}}" th:text="${friend.wrap().getFullName()}"> Fname Lname</a>
         </div>
 
-    </div>
 
 </body>
 </html>

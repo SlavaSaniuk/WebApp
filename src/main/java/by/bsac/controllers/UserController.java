@@ -1,16 +1,15 @@
 package by.bsac.controllers;
 
-import by.bsac.data.dao.FriendsDao;
 import by.bsac.data.dao.UserDao;
-import by.bsac.models.FriendsRelationship;
 import by.bsac.models.User;
+import by.bsac.models.UserWrapper;
+import by.bsac.services.users.FriendsManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Set;
 
 /**
  *
@@ -20,15 +19,21 @@ import java.util.Set;
 public class UserController {
 
     private UserDao user_dao;
-    private FriendsDao friends_dao;
+    private FriendsManager friends_manager;
 
     @RequestMapping(method = RequestMethod.GET, value = "/user/{user_id}")
     public String getCommonUserPage(@PathVariable("user_id") long user_id, Model model) {
 
+        //Get user object from database
         User given_user = this.user_dao.findById(user_id);
 
-        model.addAttribute("given_user", given_user);
+        //Create user wrapper
+        UserWrapper wrapper = new UserWrapper(given_user);
 
+        //Add to model
+        model.addAttribute("given_user", wrapper);
+
+        //Return user page
         return "user";
     }
 
@@ -42,16 +47,7 @@ public class UserController {
         User given_user = this.user_dao.findById(user_id);
 
         //Establish friendships
-        this.friends_dao.create(common_user, given_user);
-
-        //Get relationships
-        Set<FriendsRelationship> a = common_user.getInvitedMeFriends();
-        System.out.println(a.size());
-        for (FriendsRelationship rel : a) System.out.println(rel.toString());
-
-        Set<FriendsRelationship> b = common_user.getMyInvitedFriends();
-        System.out.println(a.size());
-        for (FriendsRelationship rel : b) System.out.println(rel.toString());
+        this.friends_manager.addToFriends(common_user, given_user);
 
         //Return name of user view
         return "user";
@@ -59,9 +55,8 @@ public class UserController {
 
     //Spring auto wiring beans
     @Autowired
-    public void autowire(UserDao user_dao, FriendsDao friends_dao) {
-
+    public void autowire(UserDao user_dao, FriendsManager friends_manager) {
         this.user_dao = user_dao;
-        this.friends_dao = friends_dao;
+        this.friends_manager = friends_manager;
     }
 }
