@@ -8,11 +8,11 @@
 
     <h3> Friends list </h3>
 
+    <div th:include="fragments/UserMenu :: user_menu" > </div>
 
-
-        <div th:each="friend : ${friends_list}">
-            <a href="#" th:href="@{'/user/' +${friend.getUserId()}}" th:text="${friend.wrap().getFullName()}"> Fname Lname</a>
-        </div>
+    <div th:each="friend : ${friends_list}">
+        <a href="#" th:href="@{'/user/' +${friend.getUserId()}}" th:text="${friend.wrap().getFullName()}"> Fname Lname</a>
+    </div>
 
 
 </body>

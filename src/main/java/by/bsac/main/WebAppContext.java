@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Description;
 import org.springframework.web.servlet.config.annotation.DefaultServletHandlerConfigurer;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import org.thymeleaf.spring5.SpringTemplateEngine;
@@ -86,6 +87,19 @@ public class WebAppContext implements WebMvcConfigurer {
         configurer.enable();
     }
 
+    /**
+     * Create static resources handlers.
+     * @param registry - path registry.
+     */
+    @Override
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+
+        registry.addResourceHandler("/img/**", "/css/**", "/libs/**").addResourceLocations(
+                "classpath:/static/img/",
+                "classpath:/static/css/",
+                "classpath:/static/libs/"
+        );
+    }
 
     /**
      * Autowiring beans in Spring.

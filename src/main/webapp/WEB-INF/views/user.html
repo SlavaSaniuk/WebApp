@@ -6,6 +6,9 @@
 </head>
 <body>
 
+    <!-- Include user navigation menu block -->
+    <div th:include="fragments/UserMenu :: user_menu" > </div>
+
     <h3 th:text="${given_user.getFullName()}"> "user_full_name" </h3>
 
     <a href="#" th:href="@{/friends}" > My friends </a>

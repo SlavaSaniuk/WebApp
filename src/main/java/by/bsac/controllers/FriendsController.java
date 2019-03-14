@@ -2,6 +2,7 @@ package by.bsac.controllers;
 
 import by.bsac.data.dao.UserDao;
 import by.bsac.models.User;
+import by.bsac.models.UserWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -20,10 +21,13 @@ public class FriendsController {
     @GetMapping
     public String getFriendsPage(Model a_model, HttpServletRequest a_req) {
 
-        //Get common user wrapper object from session
-        User common_user_wrapper = (User) a_req.getSession(false).getAttribute("common_user");
+        //Get common user object from session
+        User common_user = (User) a_req.getSession(false).getAttribute("common_user");
 
-        Set<User> friends_list = common_user_wrapper.getMyInvitedFriends();
+        //Wrap common user object
+        UserWrapper wrapped_user = common_user.wrap();
+
+        Set<User> friends_list = wrapped_user.getFriendsSet();
 
         a_model.addAttribute("friends_list", friends_list);
 
