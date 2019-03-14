@@ -5,7 +5,7 @@ import org.springframework.stereotype.Controller;
 /**
  *
  */
-@Controller(value = "name_controller")
+@Controller(value = "all_users_controller")
 public class UsersControllers {
 
 

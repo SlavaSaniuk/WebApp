@@ -2,7 +2,11 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title th:text="${given_user.getFullName()}"> Hello </title>
+    <title th:text="${given_user.getFullName()}"> User full name </title>
+
+    <!-- import css -->
+    <link rel="stylesheet" type="text/css" href="#" th:href="@{/css/fragments_style.css}">
+
 </head>
 <body>
 
@@ -11,14 +15,22 @@
 
     <h3 th:text="${given_user.getFullName()}"> "user_full_name" </h3>
 
-    <a href="#" th:href="@{/friends}" > My friends </a>
-
+    <!-- Add to friends form -->
+    <!-- If that a user page -->
     <div th:if="${session.common_user} != ${given_user.getUser()}">
 
-        <form action="#" th:action="@{'/user/' +${given_user.getUser().getUserId()}}" method="post">
-            <input type="submit" value="Add to friend" />
-        </form>
+        <!-- If that user already common users friend -->
+        <div th:each="user : ${session.common_user.wrap().getFriendsSet()}">
 
+            <div th:if="${user} != ${given_user.getUser()}">
+
+            <!-- Show "Add to friends" buttons -->
+            <form action="#" th:action="@{'/user/' +${given_user.getUser().getUserId()}}" method="post">
+                <input type="submit" value="Add to friend" />
+            </form>
+
+            </div>
+        </div>
     </div>
 
 </body>

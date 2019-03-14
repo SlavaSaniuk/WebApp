@@ -1,0 +1,33 @@
+
+/** User "navigation menu block" section **/
+/** List <ul> **/
+.userMenu {
+
+    position: fixed;
+    top: 40%;
+
+    margin: 0;
+    padding: 0;
+
+    width: 100px;
+
+    border: 1px solid #000000;
+    list-style-type: none;
+
+}
+
+/** Child links <a> **/
+.userMenu a {
+
+    display: block;
+    width: 100%;
+
+    text-align: left;
+    text-decoration: none;
+    color: #000000;
+
+}
+
+.userMenu a:hover {
+    color: #5f9ea0;
+}

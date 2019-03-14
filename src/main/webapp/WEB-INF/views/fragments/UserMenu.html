@@ -5,11 +5,11 @@
 </head>
 <body>
 
-    <div class="user_menu" th:fragment="user_menu" >
+    <div  th:fragment="user_menu" >
 
-        <ul>
-            <li> My profile </li>
-            <li> My friends </li>
+        <ul class="userMenu" >
+            <li> <a href="#" th:href="@{'/user/' +${session.common_user.getUserId()}}"> My profile </a>  </li>
+            <li> <a href="#" th:href="@{'/friends'}"> My friends </a> </li>
         </ul>
 
     </div>

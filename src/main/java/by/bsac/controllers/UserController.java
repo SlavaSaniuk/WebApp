@@ -50,7 +50,7 @@ public class UserController {
         this.friends_manager.addToFriends(common_user, given_user);
 
         //Return name of user view
-        return "user";
+        return "redirect:/user/" +user_id;
     }
 
     //Spring auto wiring beans

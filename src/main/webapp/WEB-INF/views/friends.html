@@ -3,12 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <title> My friends </title>
+
+    <!-- import css -->
+    <link rel="stylesheet" type="text/css" href="#" th:href="@{/css/fragments_style.css}">
+
 </head>
 <body>
 
+    <!-- Include user navigation menu block -->
+    <div th:include="fragments/UserMenu :: user_menu" > </div>
+
     <h3> Friends list </h3>
 
-    <div th:include="fragments/UserMenu :: user_menu" > </div>
+
 
     <div th:each="friend : ${friends_list}">
         <a href="#" th:href="@{'/user/' +${friend.getUserId()}}" th:text="${friend.wrap().getFullName()}"> Fname Lname</a>

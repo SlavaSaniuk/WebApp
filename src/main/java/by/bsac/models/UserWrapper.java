@@ -35,7 +35,6 @@ public class UserWrapper {
      * All users friends.
      * @return - {@link java.util.Set<User>} - Set of all user friends as {@link by.bsac.models.User} objects.
      */
-
     public Set<User> getFriendsSet() {
 
         //Create empty result set
@@ -49,6 +48,10 @@ public class UserWrapper {
 
         //Return resulting set
         return friends;
+    }
+
+    public boolean isFriend(User a_user) {
+        return getFriendsSet().contains(a_user);
     }
 
 }
