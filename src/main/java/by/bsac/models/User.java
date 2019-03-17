@@ -114,28 +114,12 @@ public class User implements Serializable {
         this.user_detail = user_detail;
     }
 
-    public Set<User> getMyInvitedFriends() {
-
-        //Create empty set
-        Set<User> friends = new HashSet<>();
-
-        //Get friends from relationships
-        for (FriendsRelationship rel : this.my_invited_friends ) friends.add(rel.getFriendshipSlave());
-
-        //Return set
-        return friends;
+    public Set<FriendsRelationship> getMyInvitedFriends() {
+        return my_invited_friends;
     }
 
-    public Set<User> getInvitedMeFriends() {
-
-        //Create empty set
-        Set<User> friends = new HashSet<>();
-
-        //Get friends from relationships
-        for (FriendsRelationship rel : this.invited_me_friends ) friends.add(rel.getFriendshipSlave());
-
-        //Return set
-        return friends;
+    public Set<FriendsRelationship> getInvitedMeFriends() {
+        return invited_me_friends;
     }
 
     /**

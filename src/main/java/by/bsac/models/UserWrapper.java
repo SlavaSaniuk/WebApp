@@ -35,16 +35,41 @@ public class UserWrapper {
      * All users friends.
      * @return - {@link java.util.Set<User>} - Set of all user friends as {@link by.bsac.models.User} objects.
      */
+
+    private Set<User> getMyInvitedFriends() {
+
+        //Create empty set
+        Set<User> friends = new HashSet<>();
+
+        //Get friends from relationships
+        for (FriendsRelationship rel : common_user.getMyInvitedFriends()) friends.add(rel.getFriendshipSlave());
+
+        //Return set
+        return friends;
+    }
+
+    private Set<User> getInvitedMeFriends() {
+
+        //Create empty set
+        Set<User> friends = new HashSet<>();
+
+        //Get friends from relationships
+        for (FriendsRelationship rel : common_user.getInvitedMeFriends()) friends.add(rel.getFriendshipSlave());
+
+        //Return set
+        return friends;
+    }
+
     public Set<User> getFriendsSet() {
 
         //Create empty result set
         Set<User> friends = new HashSet<>();
 
         //Add invited user friends to resulting set
-        friends.addAll(this.common_user.getInvitedMeFriends());
+        friends.addAll(getInvitedMeFriends());
 
         //Add invited friends by user to resulting set
-        friends.addAll(this.common_user.getMyInvitedFriends());
+        friends.addAll(getMyInvitedFriends());
 
         //Return resulting set
         return friends;

@@ -10,6 +10,10 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.EnumSet;
+import java.util.Map;
 
 /**
  *
@@ -45,6 +49,12 @@ public class UserController {
 
         //Get adding user object from db
         User given_user = this.user_dao.findById(user_id);
+
+        ArrayList<String> req_attr = (ArrayList<String>) a_req.getAttributeNames();
+
+        for (String s : req_attr) {
+            System.out.println(s);
+        }
 
         //Establish friendships
         this.friends_manager.addToFriends(common_user, given_user);

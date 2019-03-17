@@ -22,6 +22,9 @@ public class FriendsManager {
         FriendsRelationship rel = new FriendsRelationship(master, slave);
 
         //Persist in database
+        master.getMyInvitedFriends().add(rel);
+
+        //Persist in database
         this.friends_dao.create(rel);
 
     }
