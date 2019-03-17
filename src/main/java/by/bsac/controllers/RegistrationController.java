@@ -25,7 +25,6 @@ import javax.validation.Valid;
 @Scope("request")
 public class RegistrationController {
 
-
     //Used to register users in database.
     private AuthenticationService register;
 

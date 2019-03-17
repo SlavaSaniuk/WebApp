@@ -10,16 +10,12 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.EnumSet;
-import java.util.Map;
+
 
 /**
  *
  */
 @Controller
-@SessionAttributes("common_user")
 public class UserController {
 
     private UserDao user_dao;
@@ -37,24 +33,19 @@ public class UserController {
         //Add to model
         model.addAttribute("given_user", wrapper);
 
+
         //Return user page
         return "user";
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "/user/{user_id}")
-    public String handlePostMethod(@PathVariable("user_id") long user_id, HttpServletRequest a_req) {
+    public String handlePostMethod(@PathVariable("user_id") long user_id, Model model, HttpServletRequest a_req) {
 
         //Get common user object from session
         User common_user = (User) a_req.getSession(false).getAttribute("common_user");
 
         //Get adding user object from db
         User given_user = this.user_dao.findById(user_id);
-
-        ArrayList<String> req_attr = (ArrayList<String>) a_req.getAttributeNames();
-
-        for (String s : req_attr) {
-            System.out.println(s);
-        }
 
         //Establish friendships
         this.friends_manager.addToFriends(common_user, given_user);

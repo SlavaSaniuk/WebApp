@@ -19,19 +19,13 @@
     <!-- If that a user page -->
     <div th:if="${session.common_user} != ${given_user.getUser()}">
 
-        <!-- If that user already common users friend -->
-        <div th:each="user : ${session.common_user.wrap().getFriendsSet()}">
-
-            <div th:if="${user} != ${given_user.getUser()}">
-
             <!-- Show "Add to friends" buttons -->
             <form action="#" th:action="@{'/user/' +${given_user.getUser().getUserId()}}" method="post">
                 <input type="submit" value="Add to friend" />
             </form>
 
-            </div>
-        </div>
     </div>
+
 
 </body>
 </html>

@@ -1,6 +1,8 @@
 package by.bsac.models;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public class UserWrapper {
@@ -21,6 +23,10 @@ public class UserWrapper {
         return common_user;
     }
 
+    public User unwrap() {
+        return this.common_user;
+    }
+
     //User detail section
     /**
      * Get user full name (first + last name)
@@ -31,11 +37,6 @@ public class UserWrapper {
     }
 
     //Friends relationships section
-    /**
-     * All users friends.
-     * @return - {@link java.util.Set<User>} - Set of all user friends as {@link by.bsac.models.User} objects.
-     */
-
     private Set<User> getMyInvitedFriends() {
 
         //Create empty set
@@ -54,22 +55,29 @@ public class UserWrapper {
         Set<User> friends = new HashSet<>();
 
         //Get friends from relationships
-        for (FriendsRelationship rel : common_user.getInvitedMeFriends()) friends.add(rel.getFriendshipSlave());
+        for (FriendsRelationship rel : common_user.getInvitedMeFriends()) friends.add(rel.getFriendshipMaster());
 
         //Return set
         return friends;
     }
+    /**
+     * All users friends.
+     * @return - {@link java.util.Set<User>} - Set of all user friends as {@link by.bsac.models.User} objects.
+     */
 
-    public Set<User> getFriendsSet() {
+    public List<User> getFriendsSet() {
 
         //Create empty result set
-        Set<User> friends = new HashSet<>();
+        List<User> friends = new ArrayList<>();
 
         //Add invited user friends to resulting set
         friends.addAll(getInvitedMeFriends());
 
         //Add invited friends by user to resulting set
         friends.addAll(getMyInvitedFriends());
+
+        System.out.println(" All friends size: " +friends.size());
+        System.out.println();
 
         //Return resulting set
         return friends;

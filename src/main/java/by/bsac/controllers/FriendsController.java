@@ -10,7 +10,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Set;
+import java.util.List;
+
 
 @Controller
 @RequestMapping(value = "/friends")
@@ -27,7 +28,7 @@ public class FriendsController {
         //Wrap common user object
         UserWrapper wrapped_user = common_user.wrap();
 
-        Set<User> friends_list = wrapped_user.getFriendsSet();
+        List<User> friends_list = wrapped_user.getFriendsSet();
 
         a_model.addAttribute("friends_list", friends_list);
 
@@ -39,4 +40,6 @@ public class FriendsController {
     public void setUserDao(UserDao a_user_dao) {
         this.user_dao = a_user_dao;
     }
+
+
 }

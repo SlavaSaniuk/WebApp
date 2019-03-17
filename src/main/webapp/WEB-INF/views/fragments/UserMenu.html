@@ -10,6 +10,7 @@
         <ul class="userMenu" >
             <li> <a href="#" th:href="@{'/user/' +${session.common_user.getUserId()}}"> My profile </a>  </li>
             <li> <a href="#" th:href="@{'/friends'}"> My friends </a> </li>
+            <li> <a href="#" th:href="@{'/logout'}" > Exit </a> </li>
         </ul>
 
     </div>
