@@ -1,21 +1,20 @@
 package by.bsac.main;
 
+import by.bsac.services.security.filters.AuthenticationFilter;
 import org.apache.log4j.PropertyConfigurator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import org.springframework.web.WebApplicationInitializer;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
 import org.springframework.web.servlet.DispatcherServlet;
 
 
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRegistration;
-import javax.servlet.SessionTrackingMode;
+import javax.servlet.*;
+
 
 import java.io.File;
 import java.util.EnumSet;
-import java.util.Properties;
 
 
 /**
@@ -39,6 +38,7 @@ public class ApplicationStarter implements WebApplicationInitializer {
     @Override
     public void onStartup(ServletContext servletContext) throws ServletException {
 
+        //Initialize SLF4J Logger
         initializeLogger();
 
         //Log
@@ -83,14 +83,20 @@ public class ApplicationStarter implements WebApplicationInitializer {
                 //Add parameters to servlet
                 dispatcher_servlet.setLoadOnStartup(1);
                 dispatcher_servlet.addMapping("/");
+
             }
+
 
         //Refresh context
         web_ctx.refresh();
 
     }
 
-    public void initializeLogger() {
+    /**
+     * Initialize SLF4J (Log4j) Logger.
+     * Load Log4j.properties file from /resources/configuration/ folder.
+     */
+    private void initializeLogger() {
 
         //Set for application to use SLF4J instead jboss logging
         System.setProperty("org.jboss.logging.provider", "slf4j");
@@ -100,10 +106,7 @@ public class ApplicationStarter implements WebApplicationInitializer {
 
         File props = new File(cl.getResource("/configuration/log4j.properties").getFile());
 
-        Properties pr = new Properties();
         PropertyConfigurator.configure(props.getPath());
-
-
 
     }
 }

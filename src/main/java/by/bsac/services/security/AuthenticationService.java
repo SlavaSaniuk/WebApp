@@ -1,4 +1,4 @@
-package by.bsac.services;
+package by.bsac.services.security;
 
 import by.bsac.data.dao.UserDao;
 import by.bsac.exceptions.AuthenticationException;

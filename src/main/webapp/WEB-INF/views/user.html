@@ -10,10 +10,12 @@
 </head>
 <body>
 
-    <!-- Include user navigation menu block -->
-    <div th:include="fragments/UserMenu :: user_menu" > </div>
+
 
     <h3 th:text="${given_user.getFullName()}"> "user_full_name" </h3>
+
+    <!-- Include user navigation menu block -->
+    <div th:include="fragments/UserMenu :: user_menu" > </div>
 
     <!-- Add to friends form -->
     <!-- If that a user page -->
@@ -28,4 +30,6 @@
 
 
 </body>
+
+
 </html>

@@ -2,7 +2,7 @@ package by.bsac.controllers;
 
 
 import by.bsac.models.User;
-import by.bsac.services.AuthenticationService;
+import by.bsac.services.security.AuthenticationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
@@ -11,6 +11,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
 /**
@@ -71,8 +72,14 @@ public class LoginController {
             return "index";
         }
 
+        //Get user http session
+        HttpSession user_session = a_req.getSession(true);
+
+        //Add boolean attribute "authenticated" to session
+        user_session.setAttribute("authenticated", Boolean.TRUE);
+
         //Add user object to session as attribute
-        a_req.getSession(true).setAttribute("common_user", authenticated_user);
+        user_session.setAttribute("common_user", authenticated_user);
 
         //If all 'OK',
         //Then redirect to user page
