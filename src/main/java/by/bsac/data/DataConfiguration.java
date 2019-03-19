@@ -185,7 +185,6 @@ public class DataConfiguration{
         emf.setPackagesToScan("by.bsac.models");
         emf.setJpaVendorAdapter(new HibernateJpaVendorAdapter());
         emf.setJpaProperties(JpaHibernateProperties());
-
         return emf;
     }
 

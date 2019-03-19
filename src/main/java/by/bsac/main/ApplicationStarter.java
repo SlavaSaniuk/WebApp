@@ -1,5 +1,8 @@
 package by.bsac.main;
 
+import org.apache.log4j.PropertyConfigurator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.WebApplicationInitializer;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
 import org.springframework.web.servlet.DispatcherServlet;
@@ -9,7 +12,11 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRegistration;
 import javax.servlet.SessionTrackingMode;
+
+import java.io.File;
 import java.util.EnumSet;
+import java.util.Properties;
+
 
 /**
  *  Main class of Web App.
@@ -17,6 +24,9 @@ import java.util.EnumSet;
  *  Create and set 'Dispatcher servlet'.
  */
 public class ApplicationStarter implements WebApplicationInitializer {
+
+    //Logger
+    private static final Logger LOGGER = LoggerFactory.getLogger(ApplicationStarter.class);
 
     /**
      * Configure the given {@link ServletContext} with any servlets, filters, listeners
@@ -28,6 +38,11 @@ public class ApplicationStarter implements WebApplicationInitializer {
      */
     @Override
     public void onStartup(ServletContext servletContext) throws ServletException {
+
+        initializeLogger();
+
+        //Log
+        LOGGER.info("Application started");
 
         //Create Root Application Context
         AnnotationConfigWebApplicationContext root_ctx = new AnnotationConfigWebApplicationContext();
@@ -72,6 +87,23 @@ public class ApplicationStarter implements WebApplicationInitializer {
 
         //Refresh context
         web_ctx.refresh();
+
     }
 
+    public void initializeLogger() {
+
+        //Set for application to use SLF4J instead jboss logging
+        System.setProperty("org.jboss.logging.provider", "slf4j");
+
+        //Get log4j properties
+        ClassLoader cl = getClass().getClassLoader();
+
+        File props = new File(cl.getResource("/configuration/log4j.properties").getFile());
+
+        Properties pr = new Properties();
+        PropertyConfigurator.configure(props.getPath());
+
+
+
+    }
 }

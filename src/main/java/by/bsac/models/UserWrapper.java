@@ -65,19 +65,16 @@ public class UserWrapper {
      * @return - {@link java.util.Set<User>} - Set of all user friends as {@link by.bsac.models.User} objects.
      */
 
-    public List<User> getFriendsSet() {
+    public Set<User> getFriendsSet() {
 
         //Create empty result set
-        List<User> friends = new ArrayList<>();
+        Set<User> friends = new HashSet<>();
 
         //Add invited user friends to resulting set
         friends.addAll(getInvitedMeFriends());
 
         //Add invited friends by user to resulting set
         friends.addAll(getMyInvitedFriends());
-
-        System.out.println(" All friends size: " +friends.size());
-        System.out.println();
 
         //Return resulting set
         return friends;

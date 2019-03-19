@@ -20,12 +20,16 @@
   </properties>
 
   <dependencies>
+
+    <!-- JUnit dependencies -->
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <version>4.11</version>
       <scope>test</scope>
     </dependency>
+
+    <!-- Spring 5.0 dependencies -->
     <!-- https://mvnrepository.com/artifact/org.springframework/spring-web -->
     <dependency>
       <groupId>org.springframework</groupId>
@@ -44,6 +48,14 @@
       <artifactId>spring-jdbc</artifactId>
       <version>5.1.4.RELEASE</version>
     </dependency>
+    <!-- https://mvnrepository.com/artifact/org.springframework/spring-orm -->
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-orm</artifactId>
+      <version>5.1.4.RELEASE</version>
+    </dependency>
+
+    <!-- Javax Servlet API dependencies -->
     <!-- https://mvnrepository.com/artifact/javax.servlet/javax.servlet-api -->
     <dependency>
       <groupId>javax.servlet</groupId>
@@ -51,35 +63,35 @@
       <version>4.0.1</version>
       <scope>provided</scope>
     </dependency>
+
+    <!-- MySQL connector dependencies -->
     <!-- https://mvnrepository.com/artifact/mysql/mysql-connector-java -->
     <dependency>
       <groupId>mysql</groupId>
       <artifactId>mysql-connector-java</artifactId>
       <version>8.0.14</version>
     </dependency>
+
+    <!-- Thymeleaf 3.0 dependencies -->
     <!-- https://mvnrepository.com/artifact/org.thymeleaf/thymeleaf-spring5 -->
     <dependency>
       <groupId>org.thymeleaf</groupId>
       <artifactId>thymeleaf-spring5</artifactId>
       <version>3.0.11.RELEASE</version>
     </dependency>
+
+    <!-- Hibernate dependencies -->
     <!-- https://mvnrepository.com/artifact/org.hibernate/hibernate-core -->
     <dependency>
       <groupId>org.hibernate</groupId>
       <artifactId>hibernate-core</artifactId>
       <version>5.4.0.Final</version>
-    </dependency>
-    <!-- https://mvnrepository.com/artifact/org.springframework/spring-orm -->
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-orm</artifactId>
-      <version>5.1.4.RELEASE</version>
-    </dependency>
-    <!-- https://mvnrepository.com/artifact/javax.validation/validation-api -->
-    <dependency>
-      <groupId>javax.validation</groupId>
-      <artifactId>validation-api</artifactId>
-      <version>2.0.1.Final</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.jboss.logging</groupId>
+          <artifactId>jboss-logging</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <!-- https://mvnrepository.com/artifact/org.hibernate/hibernate-validator -->
     <dependency>
@@ -87,7 +99,20 @@
       <artifactId>hibernate-validator</artifactId>
       <version>6.0.13.Final</version>
     </dependency>
+    <!-- https://mvnrepository.com/artifact/javax.validation/validation-api -->
+    <dependency>
+      <groupId>javax.validation</groupId>
+      <artifactId>validation-api</artifactId>
+      <version>2.0.1.Final</version>
+    </dependency>
 
+    <!-- Logging dependencies -->
+    <!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-log4j12 -->
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-log4j12</artifactId>
+      <version>1.7.25</version>
+    </dependency>
   </dependencies>
 
   <build>

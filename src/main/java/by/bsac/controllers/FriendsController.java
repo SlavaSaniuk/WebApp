@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.List;
+import java.util.Set;
 
 
 @Controller
@@ -28,7 +28,7 @@ public class FriendsController {
         //Wrap common user object
         UserWrapper wrapped_user = common_user.wrap();
 
-        List<User> friends_list = wrapped_user.getFriendsSet();
+        Set<User> friends_list = wrapped_user.getFriendsSet();
 
         a_model.addAttribute("friends_list", friends_list);
 
