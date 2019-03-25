@@ -10,22 +10,15 @@
 </head>
 <body>
 
-
-
-    <h3 th:text="${given_user.getFullName()}"> "user_full_name" </h3>
+    <h3 th:text="${given_user.getFullName()}"> User full name </h3>
 
     <!-- Include user navigation menu block -->
     <div th:include="fragments/UserMenu :: user_menu" > </div>
 
-    <!-- Add to friends form -->
-    <!-- If that a user page -->
-    <div th:if="${session.common_user} != ${given_user.getUser()}">
-
-            <!-- Show "Add to friends" buttons -->
-            <form action="#" th:action="@{'/user/' +${given_user.getUser().getUserId()}}" method="post">
-                <input type="submit" value="Add to friend" />
-            </form>
-
+    <!-- Add to friend block form -->
+    <div th:if="${session.common_user} != ${given_user.unwrap()}">
+        <div th:replace="${isFriend} ? ~{fragments/FriendsFragments :: ifFriend} : ~{fragments/FriendsFragments :: ifNotFriend} ">
+        </div>
     </div>
 
 

@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title> Friends Fragments </title>
+</head>
+<body>
+
+    <div class="ifFriend" th:fragment="ifFriend">
+        <!-- Show "Already in my friends" text -->
+        <p> Already is my friend </p>
+    </div>
+
+    <div class="ifNotFriend" th:fragment="ifNotFriend">
+        <!-- Show "Add to friends" buttons -->
+        <form action="#" th:action="@{'/user/' +${given_user.unwrap().getUserId()}}" method="post">
+            <input type="submit" value="Add to friend" />
+        </form>
+    </div>
+
+</body>
+</html>
