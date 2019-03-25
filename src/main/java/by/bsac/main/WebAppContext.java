@@ -1,21 +1,26 @@
 package by.bsac.main;
 
-import by.bsac.services.security.filters.AuthenticationFilter;
+import by.bsac.services.security.interceptors.UserAuthInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Description;
+import org.springframework.context.support.ResourceBundleMessageSource;
+import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.config.annotation.*;
 
+import org.springframework.web.servlet.i18n.AcceptHeaderLocaleResolver;
+import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 import org.thymeleaf.spring5.SpringTemplateEngine;
 import org.thymeleaf.spring5.templateresolver.SpringResourceTemplateResolver;
 import org.thymeleaf.spring5.view.ThymeleafViewResolver;
 import org.thymeleaf.templatemode.TemplateMode;
 
-import javax.servlet.Filter;
-import javax.servlet.http.HttpFilter;
+import java.util.Locale;
+
 
 /**
  * Common Web application context configuration class.
@@ -102,8 +107,28 @@ public class WebAppContext implements WebMvcConfigurer {
         );
     }
 
+    //Spring interceptors
+    //User authentication interceptor
+    public UserAuthInterceptor createUserAuthInterceptor() {
+        return new UserAuthInterceptor();
+    }
+
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        registry.addInterceptor(createUserAuthInterceptor()).addPathPatterns("/user/{user_id}");
+    }
+
+    @Bean
+    public MessageSource resourceBundleMessageSource() {
+
+        ResourceBundleMessageSource messages_source = new ResourceBundleMessageSource();
+        messages_source.setBasenames("classpath:/static/lang/messages");
+        return messages_source;
+
+    }
+
     /**
-     * Autowiring beans in Spring.
+     * Spring beans auto wiring.
      * @param a_application_context - Root application context of WebApp.
      */
     @Autowired
