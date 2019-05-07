@@ -22,7 +22,7 @@ public class UserController {
     private FriendsManager friends_manager;
 
     @RequestMapping(method = RequestMethod.GET, value = "/user/{user_id}")
-    public String getCommonUserPage(@PathVariable("user_id") long user_id, Model model, HttpServletRequest a_request) {
+    public String getUserPage(@PathVariable("user_id") long user_id, Model model, HttpServletRequest a_request) {
 
         //Get user object from database
         User given_user = this.user_dao.findById(user_id);
@@ -36,18 +36,20 @@ public class UserController {
         //Add to model
         model.addAttribute("given_user", wrapper);
 
-        //Add 'isFriend' flag
-        //Get wrapper of common user object, and check if given user exist in friends set
-        //'isFriend' - Boolean value
-        if (!common_user.equals(given_user)) {
-            model.addAttribute("isFriend", common_user.wrap().isFriend(given_user));
-        }
+        //Friends section
+        //Get status of friends relationship
+        //Set 'addToFriends' flag
+        model.addAttribute("addToFriends", this.friends_manager.validate(common_user, given_user));
 
-
-        //Return user page
+        //Return user view
         return "user";
     }
 
+
+
+
+
+    /*
     @RequestMapping(method = RequestMethod.POST, value = "/user/{user_id}")
     public String handlePostMethod(@PathVariable("user_id") long user_id, Model model, HttpServletRequest a_req) {
 
@@ -64,6 +66,7 @@ public class UserController {
         return "redirect:/user/" +user_id;
     }
 
+    */
     //Spring auto wiring beans
     @Autowired
     public void autowire(UserDao user_dao, FriendsManager friends_manager) {

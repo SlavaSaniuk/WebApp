@@ -12,7 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service(value = "friends_service")
 public class FriendsManager {
 
-    //Class global variables
+    //Spring beans
     private FriendsDao friends_dao;
 
     @Transactional
@@ -29,8 +29,26 @@ public class FriendsManager {
 
     }
 
+    /**
+     * Validate "add to friends" request. Check situations, if common user wants add myself to friends set
+     * or wants to add user, which already exist in friends set. Uses by ajax request, thymeleaf rendering.
+     * @param master - common user object.
+     * @param slave - given user object.
+     * @return - {@link java.lang.Boolean} 'true' if friends request valid.
+     */
+    public boolean validate(User master, User slave) {
 
-    //Spring beans
+        //Check, if user want to add myself in friends.
+        if(master.equals(slave)) return false;
+
+        //Check, if slave user already exist in friends set.
+        if (master.wrap().isFriend(slave)) return false;
+
+        //If all OK then return true
+        return true;
+    }
+
+    //Spring autowiring
     public void setFriendsDao(FriendsDao a_friends_dao) {
 
         //Mapping

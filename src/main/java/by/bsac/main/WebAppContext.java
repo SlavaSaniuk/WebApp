@@ -9,16 +9,21 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Description;
 import org.springframework.context.support.ResourceBundleMessageSource;
+
 import org.springframework.web.servlet.LocaleResolver;
+import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.config.annotation.*;
 
+
 import org.springframework.web.servlet.i18n.AcceptHeaderLocaleResolver;
-import org.springframework.web.servlet.i18n.SessionLocaleResolver;
+import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 import org.thymeleaf.spring5.SpringTemplateEngine;
 import org.thymeleaf.spring5.templateresolver.SpringResourceTemplateResolver;
 import org.thymeleaf.spring5.view.ThymeleafViewResolver;
 import org.thymeleaf.templatemode.TemplateMode;
+import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
 
+import javax.servlet.ServletContext;
 import java.util.Locale;
 
 
@@ -36,13 +41,26 @@ public class WebAppContext implements WebMvcConfigurer {
     //Root application context
     private ApplicationContext application_context;
 
-    //Beans definition
-    //Thymeleaf beans:
+    //Servlet context
+    private ServletContext servlet_context;
 
+    //Beans definition
+    //Thymeleaf beans
     /**
      * Create a Thymeleaf template resolver engine. Resolve template names.
      * @return - SpringResourceTemplateResolver - common template resolver.
      */
+    @Bean
+    public ServletContextTemplateResolver contextTemplateResolver() {
+        ServletContextTemplateResolver tr = new ServletContextTemplateResolver(servlet_context);
+        tr.setPrefix("/WEB-INF/views/");
+        tr.setSuffix("./html");
+        tr.setTemplateMode(TemplateMode.HTML);
+        tr.setCacheable(false);
+        tr.setOrder(1);
+        return tr;
+    }
+
     @Bean
     @Description("Thymeleaf template resolver.")
     public SpringResourceTemplateResolver templateResolver() {
@@ -52,6 +70,7 @@ public class WebAppContext implements WebMvcConfigurer {
         templateResolver.setSuffix(".html");
         templateResolver.setTemplateMode(TemplateMode.HTML);
         templateResolver.setCacheable(false);
+        templateResolver.setOrder(2);
         return  templateResolver;
     }
 
@@ -74,10 +93,9 @@ public class WebAppContext implements WebMvcConfigurer {
      */
     @Bean
     @Description("Main view resolver")
-    public ThymeleafViewResolver thymeleafViewResolver() {
+    public ViewResolver thymeleafViewResolver() {
         ThymeleafViewResolver view_resolver = new ThymeleafViewResolver();
         view_resolver.setTemplateEngine(this.templateEngine());
-        view_resolver.setOrder(10);
         return view_resolver;
     }
 
@@ -100,29 +118,48 @@ public class WebAppContext implements WebMvcConfigurer {
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
 
-        registry.addResourceHandler("/img/**", "/css/**", "/libs/**").addResourceLocations(
+        registry.addResourceHandler("/img/**", "/css/**", "/libs/**","/lang/**").addResourceLocations(
                 "classpath:/static/img/",
                 "classpath:/static/css/",
-                "classpath:/static/libs/"
+                "classpath:/static/libs/",
+                "classpath:/static/lang/"
         );
     }
 
     //Spring interceptors
     //User authentication interceptor
+    @Bean
     public UserAuthInterceptor createUserAuthInterceptor() {
         return new UserAuthInterceptor();
+    }
+
+    @Bean
+    public LocaleChangeInterceptor createLocaleChangeInterceptor() {
+        LocaleChangeInterceptor lci = new LocaleChangeInterceptor();
+        lci.setParamName("lang");
+        return lci;
     }
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(createUserAuthInterceptor()).addPathPatterns("/user/{user_id}");
+        registry.addInterceptor(createLocaleChangeInterceptor());
     }
 
+    //Spring components
     @Bean
-    public MessageSource resourceBundleMessageSource() {
+    public LocaleResolver createLocaleResolver() {
+        AcceptHeaderLocaleResolver slr = new AcceptHeaderLocaleResolver();
+        slr.setDefaultLocale(Locale.ENGLISH);
+        return slr;
+    }
+
+    @Bean(name = "messageSource")
+    public MessageSource messageSource() {
 
         ResourceBundleMessageSource messages_source = new ResourceBundleMessageSource();
-        messages_source.setBasenames("classpath:/static/lang/messages");
+        messages_source.setBasenames("static/lang/messages");
+        messages_source.setDefaultEncoding("UTF-8");
         return messages_source;
 
     }
@@ -130,12 +167,14 @@ public class WebAppContext implements WebMvcConfigurer {
     /**
      * Spring beans auto wiring.
      * @param a_application_context - Root application context of WebApp.
+     * @param a_servlet_context - Common servlet context.
      */
     @Autowired
-    public void setApplicationContext(ApplicationContext a_application_context) {
+    public void springAutoWiring(ApplicationContext a_application_context, ServletContext a_servlet_context) {
 
-        //Mapping context:
+        //Mapping
         this.application_context = a_application_context;
+        this.servlet_context = a_servlet_context;
 
     }
 

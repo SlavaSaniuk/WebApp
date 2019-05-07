@@ -1,26 +1,35 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
+
     <title th:text="${given_user.getFullName()}"> User full name </title>
+
+    <meta charset="UTF-8">
 
     <!-- import css -->
     <link rel="stylesheet" type="text/css" href="#" th:href="@{/css/fragments_style.css}">
+
+    <!-- import JS -->
+    <script> var given_user_id = [[${given_user.unwrap().getUserId()}]] // User ID global variable </script>
+    <script type="text/javascript" src="#" th:src="@{/libs/friendsScripts.js}"> </script>
 
 </head>
 <body>
 
     <h3 th:text="${given_user.getFullName()}"> User full name </h3>
 
-    <!-- Include user navigation menu block -->
-    <div th:include="fragments/UserMenu :: user_menu" > </div>
 
-    <!-- Add to friend block form -->
-    <div th:if="${session.common_user} != ${given_user.unwrap()}">
-        <div th:replace="${isFriend} ? ~{fragments/FriendsFragments :: ifFriend} : ~{fragments/FriendsFragments :: ifNotFriend} ">
-        </div>
+
+
+    <div class="friends-btn-block" th:if="${addToFriends}">
+        <form>
+            <input type="button" value="Add to friends" th:id="friends_btn" th:value="#{friends.btn.status.add}"
+                   onclick="sendFriendsRequest(given_user_id)" />
+        </form>
     </div>
 
+    <!-- Include user navigation menu block -->
+    <div th:include="fragments/UserMenu :: user_menu" > </div>
 
 </body>
 
