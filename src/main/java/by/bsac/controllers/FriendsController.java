@@ -35,6 +35,8 @@ public class FriendsController {
         return "friends";
     }
 
+
+
     //Spring beans auto wiring
     @Autowired
     public void setUserDao(UserDao a_user_dao) {

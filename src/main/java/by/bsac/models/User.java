@@ -65,7 +65,6 @@ public class User implements Serializable {
     }
 
     //Getters and setters
-
     public long getUserId() {
         return user_id;
     }

@@ -3,7 +3,7 @@ package by.bsac.services;
 import by.bsac.data.dao.FriendsDao;
 import by.bsac.data.dao.UserDao;
 import by.bsac.services.security.AuthenticationService;
-import by.bsac.services.users.FriendsManager;
+import by.bsac.services.users.friends.FriendsManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 

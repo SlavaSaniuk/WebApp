@@ -42,3 +42,8 @@ CREATE TABLE friends_relationships (
   FOREIGN KEY (friend_1_id) REFERENCES user(user_id),
   FOREIGN KEY (friend_2_id) REFERENCES user(user_id)
 );
+
+/*
+  Add "relationships_status" column to "friends_relationships"
+ */
+ALTER TABLE friends_relationships ADD COLUMN rel_status INT(1) NOT NULL;

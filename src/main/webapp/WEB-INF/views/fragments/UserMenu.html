@@ -10,7 +10,7 @@
 
         <ul class="userMenu" >
             <li> <a href="#" th:href="@{'/user/' +${session.common_user.getUserId()}}" th:text="#{menu.myPage}"> My page </a>  </li>
-            <li> <a href="#" th:href="@{'/friends'}" th:text="#{menu.friends}"> My friends </a> </li>
+            <li> <a href="#" th:href="@{'/friends'}" th:text="#{menu.friends} +' +' +${session.unconfirmed_requests}"> My friends </a> </li>
             <li> <a href="#" th:href="@{'/logout'}" th:text="#{menu.logout}"> Exit </a> </li>
         </ul>
 

@@ -4,7 +4,7 @@ public class UserID {
 
     private long user_id;
 
-    public long getUser_id() {
+    public long getUserId() {
         return user_id;
     }
 

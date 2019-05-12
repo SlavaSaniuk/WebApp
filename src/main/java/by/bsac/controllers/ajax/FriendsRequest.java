@@ -1,9 +1,11 @@
 package by.bsac.controllers.ajax;
 
 import by.bsac.controllers.ajax.jsonJavaObjects.UserID;
+import by.bsac.data.dao.FriendsDao;
 import by.bsac.data.dao.UserDao;
+import by.bsac.models.FriendsRelationship;
 import by.bsac.models.User;
-import by.bsac.services.users.FriendsManager;
+import by.bsac.services.users.friends.FriendsManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +27,7 @@ public class FriendsRequest {
     //Spring beans
     private FriendsManager friends_manager;
     private UserDao user_dao;
+    private FriendsDao friends_dao;
 
     /**
      * Method add given user (founds by his ID) to common user friends set. Called by AJAX
@@ -45,7 +48,7 @@ public class FriendsRequest {
         User common_user = (User) a_req.getSession(false).getAttribute("common_user");
 
         //Find given user object
-        User given_user = user_dao.findById(user_id.getUser_id());
+        User given_user = user_dao.findById(user_id.getUserId());
 
         //Validate friends request
         if (friends_manager.validate(common_user, given_user)) {
@@ -54,9 +57,37 @@ public class FriendsRequest {
             this.friends_manager.addToFriends(common_user, given_user);
 
             //Log
-            LOGGER.info("User (id" +common_user.getUserId() +") wants to add user (id" +user_id.getUser_id()  +") in friends set.");
+            LOGGER.info("User (id" +common_user.getUserId() +") wants to add user (id" +user_id.getUserId()  +") in friends set.");
         }
 
+    }
+
+    /**
+     * Confirm friends request and install friendship between master user and common user.
+     * Method get FriendsRelationship object from database by its members ID and update its status
+     * ({@link by.bsac.services.users.friends.FriendsStatus}).
+     * @param master_id - User ID of master of relationship.
+     * @param a_req - HttpServletRequest object. (AJAX request).
+     * @param a_resp - HttpServletResponse object. (AJAX response).
+     */
+    @RequestMapping(value = "/confirmFriendsRequest", method = RequestMethod.POST)
+    @ResponseBody
+    public void confirmFriendsRequest(@RequestBody UserID master_id, HttpServletRequest a_req, HttpServletResponse a_resp) {
+
+        //Set response content type
+        a_resp.setContentType("application/json");
+
+        //Get common user object from session
+        User common_user = (User) a_req.getSession(false).getAttribute("common_user");
+
+        //Find the friends relationship by ID of its members
+        FriendsRelationship rel = this.friends_dao.findRelationshipByMembers(master_id.getUserId(), common_user.getUserId());
+
+        //Confirm friendship
+        this.friends_manager.confirmFriendship(rel);
+
+        //Log
+        LOGGER.info("Friendship between members: user(id" +master_id +") and user(id" +common_user.getUserId() +") was installed.");
     }
 
 
@@ -69,10 +100,11 @@ public class FriendsRequest {
         return 0;
     }
 
-    //Spring auto wiring
+    //Spring autowiring
     @Autowired
-    public void autowire(FriendsManager friends_manager, UserDao user_dao) {
+    public void autowire(FriendsManager friends_manager, UserDao user_dao, FriendsDao friends_dao) {
         this.friends_manager = friends_manager;
         this.user_dao = user_dao;
+        this.friends_dao = friends_dao;
     }
 }
